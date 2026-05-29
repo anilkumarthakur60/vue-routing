@@ -39,6 +39,9 @@ function onLogout(): void {
         <div class="nav-group">Model binding</div>
         <router-link :to="{ name: 'users.index' }">Users</router-link>
 
+        <div class="nav-group">Nested layout</div>
+        <router-link :to="{ name: 'settings.profile' }">Settings</router-link>
+
         <div class="nav-group">Tooling</div>
         <router-link :to="{ name: 'routes' }">Route table</router-link>
         <router-link :to="{ name: 'error.forbidden' }">403 page</router-link>
