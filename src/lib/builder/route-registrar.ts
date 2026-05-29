@@ -156,11 +156,7 @@ export class RouteRegistrar {
   // ── Resourceful routing (navigable pages only) ──────────────────────────────
 
   /** Register the navigable resource routes (index/create/show/edit). */
-  public resource(
-    name: string,
-    component: RouteComponent,
-    options: ResourceOptions = {},
-  ): RouteRegistrar {
+  public resource(name: string, component: RouteComponent, options: ResourceOptions = {}): this {
     const actions = filterActions(RESOURCE_ACTIONS, options)
     this.with({ prefix: name, namePrefix: name }).group(() => {
       for (const action of actions) {

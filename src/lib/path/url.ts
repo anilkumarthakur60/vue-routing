@@ -30,7 +30,7 @@ export function compileUrl(pattern: string, params: Record<string, ParamValue> =
   const cleanPath = collapseSlashes(path) || '/'
 
   const query = Object.entries(params)
-    .filter(([key, value]) => !used.has(key) && value !== undefined)
+    .filter(([key]) => !used.has(key))
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
     .join('&')
 
