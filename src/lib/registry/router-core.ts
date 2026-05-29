@@ -128,7 +128,11 @@ export class RouterCore implements RouteDefinitionHost {
     this.tree.clear()
     this.names.clear()
     this.bindingRegistry.clear()
-    for (const key of Object.keys(this.globalPatterns)) delete this.globalPatterns[key]
+    // Mutate in place (the object is shared by reference with RouteDefinitions);
+    // Reflect.deleteProperty avoids the dynamic `delete` operator.
+    for (const key of Object.keys(this.globalPatterns)) {
+      Reflect.deleteProperty(this.globalPatterns, key)
+    }
   }
 
   // ── Internals ─────────────────────────────────────────────────────────────────
