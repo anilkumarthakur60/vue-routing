@@ -140,7 +140,7 @@ export class Router {
 
   /** Register an explicit binding resolver for a route parameter. */
   public bind<TModel>(param: string, resolver: BindingResolver<TModel>): this {
-    this.core.bind(param, resolver as BindingResolver)
+    this.core.bind(param, resolver)
     return this
   }
 
