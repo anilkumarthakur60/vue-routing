@@ -184,6 +184,34 @@ npm run format        # prettier --write
 npm run format:check  # prettier --check
 ```
 
+## Continuous integration & releases
+
+GitHub Actions workflows live in [`.github/workflows`](./.github/workflows):
+
+| Workflow                                                | Trigger                    | What it does                                                         |
+| ------------------------------------------------------- | -------------------------- | -------------------------------------------------------------------- |
+| **CI** (`ci.yml`)                                       | push to `main`, PRs        | lint, format check, typecheck, test, build lib + demo (Node 20 & 22) |
+| **Release** (`release.yml`)                             | a published GitHub Release | verify, build, `npm publish` (public, with provenance)               |
+| **Docs** (`docs.yml`)                                   | push to `main`             | build VitePress and deploy to GitHub Pages                           |
+| **Dependabot auto-merge** (`dependabot-auto-merge.yml`) | Dependabot PRs             | approve + auto-merge patch/minor bumps (majors stay manual)          |
+
+Dependencies are kept current by [`dependabot.yml`](./.github/dependabot.yml)
+(weekly npm + GitHub Actions updates, grouped by type).
+
+One-time setup:
+
+1. **Publishing** — add an npm token as the repo secret **`NPM_TOKEN`**
+   (Settings → Secrets and variables → Actions). To release: bump the version,
+   then publish a GitHub Release/tag — the workflow runs `npm publish`.
+   (`publishConfig` already sets `access: public` + provenance.)
+2. **Docs (GitHub Pages)** — Settings → Pages → Source: **GitHub Actions**. The
+   docs base path is set automatically to `/<repo>/` in CI.
+3. **Demo (Vercel)** — handled by Vercel's native Git integration via
+   [`vercel.json`](./vercel.json); no workflow or secret needed.
+4. **Auto-merge** — enable **Settings → General → Allow auto-merge**, and add a
+   branch-protection rule on `main` requiring the CI checks. Auto-merge then
+   waits for green CI before merging Dependabot's patch/minor PRs.
+
 ## License
 
 MIT

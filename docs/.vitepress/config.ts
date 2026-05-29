@@ -3,6 +3,9 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: '@anil-labs/vue-routing',
   description: 'Laravel-inspired, fully-typed declarative routing for Vue 3.',
+  // On GitHub Pages a project site is served from /<repo>/. CI sets DOCS_BASE;
+  // locally it defaults to '/'.
+  base: process.env['DOCS_BASE'] || '/',
   cleanUrls: true,
   themeConfig: {
     nav: [

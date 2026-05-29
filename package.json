@@ -13,6 +13,21 @@
     "middleware"
   ],
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anil-labs/vue-routing.git"
+  },
+  "homepage": "https://github.com/anil-labs/vue-routing#readme",
+  "bugs": {
+    "url": "https://github.com/anil-labs/vue-routing/issues"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "files": [
     "dist"
   ],
@@ -29,6 +44,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
+    "prepublishOnly": "npm run build",
     "preview": "vite preview",
     "build:demo": "vue-tsc -b && vite build --config vite.demo.config.ts",
     "preview:demo": "vite preview --config vite.demo.config.ts",
