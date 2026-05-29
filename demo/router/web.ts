@@ -7,6 +7,7 @@ import { Route } from '@anil-labs/vue-routing'
 // Layouts
 import MainLayout from '../layouts/MainLayout.vue'
 import AuthLayout from '../layouts/AuthLayout.vue'
+import SettingsLayout from '../layouts/SettingsLayout.vue'
 
 // Middleware
 import auth from '../middleware/auth'
@@ -30,6 +31,9 @@ import UsersIndex from '../pages/users/UsersIndex.vue'
 import UserCreate from '../pages/users/UserCreate.vue'
 import UserShow from '../pages/users/UserShow.vue'
 import UserEdit from '../pages/users/UserEdit.vue'
+import SettingsProfile from '../pages/settings/SettingsProfile.vue'
+import SettingsSecurity from '../pages/settings/SettingsSecurity.vue'
+import SettingsNotifications from '../pages/settings/SettingsNotifications.vue'
 
 // ── Global parameter pattern ────────────────────────────────────────────────
 // Every `{id}` across the app is constrained to digits unless overridden.
@@ -80,6 +84,19 @@ Route.middleware(log, auth)
           .name('show')
           .missing(() => ({ name: 'users.index' }))
         Route.get('{user}/edit', UserEdit).name('edit')
+      })
+
+    // Nested layout + nested routing: MainLayout › SettingsLayout › page.
+    // SettingsLayout renders inside MainLayout's <router-view>, and its children
+    // render through SettingsLayout's own <router-view>.
+    Route.redirect('settings', '/settings/profile')
+    Route.layout(SettingsLayout)
+      .prefix('settings')
+      .asPrefix('settings')
+      .group(() => {
+        Route.view('profile', SettingsProfile).name('profile')
+        Route.view('security', SettingsSecurity).name('security')
+        Route.view('notifications', SettingsNotifications).name('notifications')
       })
 
     // Live route table (uses Route.toList())
