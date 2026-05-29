@@ -222,6 +222,32 @@ th {
   margin-top: 8px;
 }
 
+/* ── Nested layout sub-navigation ────────────────────────── */
+.subnav {
+  display: flex;
+  gap: 6px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px;
+}
+.subnav a {
+  color: var(--muted);
+  padding: 6px 12px;
+  border-radius: 7px 7px 0 0;
+  font-size: 0.9rem;
+}
+.subnav a:hover {
+  background: var(--panel-2);
+  text-decoration: none;
+}
+.subnav a.router-link-active {
+  color: var(--accent);
+  border-bottom: 2px solid var(--accent);
+  font-weight: 600;
+}
+.subview {
+  min-height: 80px;
+}
+
 /* ── Auth (centered) layout ──────────────────────────────── */
 .auth-shell {
   min-height: 100vh;
