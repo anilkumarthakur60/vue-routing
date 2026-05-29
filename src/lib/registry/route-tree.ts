@@ -96,7 +96,7 @@ export class RouteTree {
   ): LayoutWrapper | undefined {
     for (const raw of level) {
       const node = this.wrappers.get(raw)
-      if (node && node.component === layout && node.path === wrapperPath) return node
+      if (node?.component === layout && node.path === wrapperPath) return node
     }
     return undefined
   }

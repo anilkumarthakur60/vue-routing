@@ -40,6 +40,12 @@ Route.pattern('id', '[0-9]+')
 // Returning null triggers the route's `missing()` handler.
 Route.bind('user', (value) => findUser(value))
 
+// ── Root redirect ───────────────────────────────────────────────────────────
+// Must be top-level: the guest and protected layouts both occupy '/', so the
+// bare '/' needs an explicit redirect (otherwise the first layout matches with
+// no child and renders blank).
+Route.redirect('/', '/dashboard')
+
 // ── Public area (guest-only) wrapped in AuthLayout ──────────────────────────
 Route.middleware(log, guest)
   .layout(AuthLayout)
@@ -51,9 +57,6 @@ Route.middleware(log, guest)
 Route.middleware(log, auth)
   .layout(MainLayout)
   .group(() => {
-    // Redirect: root → dashboard
-    Route.redirect('', '/dashboard')
-
     // Basic view routes with names
     Route.view('dashboard', DashboardPage).name('dashboard')
     Route.view('about', AboutPage, { version: '1.0.0' }).name('about')

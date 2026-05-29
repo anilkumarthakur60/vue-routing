@@ -8,7 +8,8 @@ import type { MiddlewareFn } from '@/lib'
 const stub = (name: string): Component => ({ name, render: () => null })
 
 /** Typed child accessor for assertions (only wrappers carry children). */
-function childrenOf(record: RouteRecordRaw): RouteRecordRaw[] {
+function childrenOf(record: RouteRecordRaw | undefined): RouteRecordRaw[] {
+  if (!record) return []
   return (record as { children?: RouteRecordRaw[] }).children ?? []
 }
 
@@ -92,7 +93,7 @@ describe('layouts', () => {
     expect(routes).toHaveLength(1)
     const wrapper = routes[0]
     expect(wrapper?.path).toBe('/')
-    const children = childrenOf(wrapper as RouteRecordRaw)
+    const children = childrenOf(wrapper)
     expect(children.map((child) => child.path)).toEqual(['dashboard', 'profile'])
     expect(children.map((child) => child.name)).toEqual(['dashboard', 'profile'])
   })
@@ -105,9 +106,9 @@ describe('layouts', () => {
     })
     const outer = Route.getRoutes()[0]
     expect(outer?.path).toBe('/')
-    const inner = childrenOf(outer as RouteRecordRaw)[0]
+    const inner = childrenOf(outer)[0]
     expect(inner?.path).toBe('')
-    const leaf = childrenOf(inner as RouteRecordRaw)[0]
+    const leaf = childrenOf(inner)[0]
     expect(leaf?.path).toBe('settings')
     expect(leaf?.name).toBe('settings')
   })
@@ -119,7 +120,7 @@ describe('layouts', () => {
       .group(() => {
         Route.view('dashboard', Dashboard).name('dashboard')
       })
-    const leaf = childrenOf(Route.getRoutes()[0] as RouteRecordRaw)[0]
+    const leaf = childrenOf(Route.getRoutes()[0])[0]
     expect(leaf?.meta?.middleware).toContain(auth)
   })
 })
