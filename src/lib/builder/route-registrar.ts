@@ -7,7 +7,7 @@
  *
  * Client-side router → the only verb is `get` (navigation).
  */
-import { RESOURCE_ACTIONS, RESOURCE_ACTION_MAP, patterns, type PatternName } from '@/lib/constants'
+import { RESOURCE_ACTIONS, RESOURCE_ACTION_MAP, type PatternName } from '@/lib/constants'
 import type { RouterCore } from '@/lib/registry'
 import type {
   GroupAttributes,
@@ -18,6 +18,7 @@ import type {
   RouteComponent,
 } from '@/lib/types'
 import { appendRouteName } from '@/lib/text'
+import { joinPaths, patternConstraints } from '@/lib/path'
 import { RouteDefinition } from '@/lib/builder/route-definition'
 
 export class RouteRegistrar {
@@ -94,6 +95,21 @@ export class RouteRegistrar {
     return this.wherePattern(params, 'alphaNumeric')
   }
 
+  /** Constrain parameters to a UUID across the group. */
+  public whereUuid(...params: string[]): RouteRegistrar {
+    return this.wherePattern(params, 'uuid')
+  }
+
+  /** Constrain parameters to a ULID across the group. */
+  public whereUlid(...params: string[]): RouteRegistrar {
+    return this.wherePattern(params, 'ulid')
+  }
+
+  /** Constrain a parameter to one of a fixed set of values across the group. */
+  public whereIn(param: string, values: readonly string[]): RouteRegistrar {
+    return this.where({ [param]: values.join('|') })
+  }
+
   /** Scope nested child bindings to their parent across the group. */
   public scopeBindings(): RouteRegistrar {
     return this.with({ scopeBindings: true })
@@ -158,7 +174,12 @@ export class RouteRegistrar {
   /** Register the navigable resource routes (index/create/show/edit). */
   public resource(name: string, component: RouteComponent, options: ResourceOptions = {}): this {
     const actions = filterActions(RESOURCE_ACTIONS, options)
-    this.with({ prefix: name, namePrefix: name }).group(() => {
+    // Merge the resource name onto any prefix/name already set at this level
+    // (e.g. `Route.prefix('admin').resource('posts', …)` → `/admin/posts`)
+    // instead of overwriting it.
+    const prefix = this.attributes.prefix ? joinPaths(this.attributes.prefix, name) : name
+    const namePrefix = appendRouteName(this.attributes.namePrefix ?? '', name)
+    this.with({ prefix, namePrefix }).group(() => {
       for (const action of actions) {
         const config = RESOURCE_ACTION_MAP[action]
         const actionComponent = options.components?.[action] ?? component
@@ -171,9 +192,7 @@ export class RouteRegistrar {
   // ── Internals ────────────────────────────────────────────────────────────────
 
   private wherePattern(params: string[], pattern: PatternName): RouteRegistrar {
-    const constraints: Record<string, string> = {}
-    for (const param of params) constraints[param] = patterns[pattern]
-    return this.where(constraints)
+    return this.where(patternConstraints(params, pattern))
   }
 }
 

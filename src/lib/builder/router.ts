@@ -12,6 +12,7 @@ import type {
   BindingResolver,
   GroupAttributes,
   MiddlewareFn,
+  MissingHandler,
   ResourceOptions,
   RouteComponent,
 } from '@/lib/types'
@@ -65,6 +66,26 @@ export class Router {
 
   public whereAlpha(...params: string[]): RouteRegistrar {
     return this.root().whereAlpha(...params)
+  }
+
+  public whereAlphaNumeric(...params: string[]): RouteRegistrar {
+    return this.root().whereAlphaNumeric(...params)
+  }
+
+  public whereUuid(...params: string[]): RouteRegistrar {
+    return this.root().whereUuid(...params)
+  }
+
+  public whereUlid(...params: string[]): RouteRegistrar {
+    return this.root().whereUlid(...params)
+  }
+
+  public whereIn(param: string, values: readonly string[]): RouteRegistrar {
+    return this.root().whereIn(param, values)
+  }
+
+  public missing(handler: MissingHandler): RouteRegistrar {
+    return this.root().missing(handler)
   }
 
   public scopeBindings(): RouteRegistrar {

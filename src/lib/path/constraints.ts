@@ -1,3 +1,17 @@
+import { patterns, type PatternName } from '@/lib/constants'
+
+/**
+ * Build a `where`-style constraints map that applies one named built-in pattern
+ * (`number`, `uuid`, …) to each of the given parameters. Shared by the group
+ * (`RouteRegistrar`) and per-route (`RouteDefinition`) `whereX()` helpers.
+ */
+export function patternConstraints(
+  params: readonly string[],
+  pattern: PatternName,
+): Record<string, string> {
+  return Object.fromEntries(params.map((param): [string, string] => [param, patterns[pattern]]))
+}
+
 /**
  * Apply regex constraints to `:param` placeholders. Per-route `where` entries
  * take precedence over global patterns. A param already carrying an inline

@@ -7,6 +7,7 @@
 import type { NavigationGuard, NavigationGuardReturn, RouteLocationNormalized } from 'vue-router'
 import type { BindingResolver, MissingHandler } from '@/lib/types'
 import { collectMiddleware, runMiddleware } from '@/lib/runtime/middleware-runner'
+import { domainToRegExp } from '@/lib/path'
 
 /** Create the navigation guard, optionally resolving model bindings. */
 export function createNavigationGuard(bindings?: Map<string, BindingResolver>): NavigationGuard {
@@ -31,8 +32,7 @@ function checkDomains(to: RouteLocationNormalized): NavigationGuardReturn {
   for (const record of to.matched) {
     const domain = record.meta.domain
     if (!domain) continue
-    const pattern = domain.replace(/\{[^}]+\}/g, '([^.]+)')
-    if (!new RegExp(`^${pattern}$`).test(window.location.hostname)) {
+    if (!domainToRegExp(domain).test(window.location.hostname)) {
       return false
     }
   }

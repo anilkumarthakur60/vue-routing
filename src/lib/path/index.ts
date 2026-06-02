@@ -3,4 +3,5 @@ export { convertLaravelParams, extractBindingFields, extractParamNames } from '@
 export type { ParamToken } from '@/lib/path/params'
 export { compileUrl } from '@/lib/path/url'
 export type { ParamValue } from '@/lib/path/url'
-export { applyWhereConstraints } from '@/lib/path/constraints'
+export { applyWhereConstraints, patternConstraints } from '@/lib/path/constraints'
+export { domainParamNames, domainToRegExp, matchDomain } from '@/lib/path/domain'

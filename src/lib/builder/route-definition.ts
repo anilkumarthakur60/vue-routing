@@ -13,8 +13,8 @@ import type {
   RegisteredRoute,
   RouteDefinitionHost,
 } from '@/lib/types'
-import { patterns, type PatternName } from '@/lib/constants'
-import { applyWhereConstraints } from '@/lib/path'
+import type { PatternName } from '@/lib/constants'
+import { applyWhereConstraints, patternConstraints } from '@/lib/path'
 import { appendRouteName } from '@/lib/text'
 
 export class RouteDefinition {
@@ -139,8 +139,6 @@ export class RouteDefinition {
   // ── Internals ────────────────────────────────────────────────────────────────
 
   private applyPattern(params: string[], pattern: PatternName): this {
-    const constraints: Record<string, string> = {}
-    for (const param of params) constraints[param] = patterns[pattern]
-    return this.where(constraints)
+    return this.where(patternConstraints(params, pattern))
   }
 }
