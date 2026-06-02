@@ -1,4 +1,7 @@
-# Routing
+# Defining Routes
+
+Routes are declared on the `Route` facade. Each definition method registers a
+record and returns a chainable [`RouteDefinition`](/api/#routedefinition).
 
 ## Basic routes
 
@@ -7,103 +10,78 @@ Route.get('about', AboutPage).name('about')
 ```
 
 `get` registers a navigable route. The first argument is the URI, the second the
-component (eager or a lazy `() => import(...)`).
+component — either eager or a lazy `() => import('...')` loader:
 
-### View routes
+```ts
+Route.get('about', () => import('@/pages/About.vue')).name('about')
+```
 
-`view` is `get` plus optional static props:
+By default the record is created with `props: true`, so route params are passed
+to the component as props.
+
+## View routes
+
+`view` is `get` plus optional **static** props. Use it for pages that take fixed
+configuration rather than route params:
 
 ```ts
 Route.view('about', AboutPage, { version: '1.0.0' }).name('about')
 ```
 
-### Redirects
+```ts
+defineProps<{ version?: string }>() // inside AboutPage
+```
+
+## Redirects
 
 ```ts
-Route.redirect('here', '/there') // 302
-Route.redirect('here', '/there', 301) // custom status
+Route.redirect('here', '/there') // 302 (default)
+Route.redirect('here', '/there', 301) // explicit status
 Route.permanentRedirect('home', '/dashboard') // 301
 ```
 
-### Fallback (404)
+A common pattern is redirecting the index of a section to its default child:
+
+```ts
+Route.redirect('settings', '/settings/profile')
+```
+
+## Fallback (404)
 
 ```ts
 Route.fallback(NotFoundPage)
 ```
 
-Matches `/:pathMatch(.*)*` and is registered under the name `NotFound`.
+This matches `/:pathMatch(.*)*` and is registered under the name `NotFound`, so
+`Route.has('NotFound')` is `true` and you can navigate to it programmatically.
 
 ## Route parameters
 
-Both Laravel `{param}` and vue-router `:param` syntaxes work and interoperate.
+Both Laravel `{param}` and vue-router `:param` syntaxes work and interoperate —
+use whichever you prefer.
 
 ```ts
 Route.get('users/{id}', UserPage).name('users.show') // required
 Route.get('user/{name?}', UserPage).name('user') // optional
 Route.get('posts/{post:slug}', PostPage).name('posts.show') // custom key
+Route.get('posts/{post:slug?}', PostPage).name('posts.show') // optional custom key
 ```
 
-## Constraints
+- `{param}` → a required segment.
+- `{param?}` → optional.
+- `{param:column}` → a [custom binding key](/guide/model-binding#custom-keys);
+  the `column` is handed to your resolver, the URL segment stays `:param`.
 
-Constrain parameters with regular expressions:
+Constrain parameters with regex via `.where()` and the `whereX` helpers — see
+[Parameters & Constraints](/guide/constraints).
 
-```ts
-Route.get('users/{id}', UserPage).where({ id: '[0-9]+' })
-
-// Convenience helpers:
-Route.get('users/{id}', UserPage).whereNumber('id')
-Route.get('users/{name}', UserPage).whereAlpha('name')
-Route.get('users/{slug}', UserPage).whereAlphaNumeric('slug')
-Route.get('users/{id}', UserPage).whereUuid('id')
-Route.get('users/{id}', UserPage).whereUlid('id')
-Route.get('cat/{c}', Page).whereIn('c', ['movie', 'song'])
-```
-
-### Global patterns
-
-Apply a constraint to every matching parameter name:
-
-```ts
-Route.pattern('id', '[0-9]+')
-Route.patterns({ id: '[0-9]+', uuid: '[0-9a-f-]+' })
-```
-
-## Named routes & URL generation
-
-```ts
-Route.get('users/{id}/profile', Page).name('profile')
-
-Route.route('profile', { id: 1 }) // → '/users/1/profile'
-Route.route('profile', { id: 1, tab: 'a' }) // → '/users/1/profile?tab=a'
-Route.has('profile') // → true
-```
-
-## Resources
-
-A single call generates the navigable resource routes — `index`, `create`,
-`show`, `edit`:
-
-```ts
-Route.resource('posts', PostsPage)
-// posts.index   /posts
-// posts.create  /posts/create
-// posts.show    /posts/:id
-// posts.edit    /posts/:id/edit
-```
-
-Server-side actions (`store`/`update`/`destroy`) have no page, so they are not
-generated. Restrict actions or override components per action:
-
-```ts
-Route.resource('posts', PostsPage, {
-  only: ['index', 'show'],
-  components: { show: PostShowPage },
-})
-```
-
-## Inspecting routes
+## Inspecting registered routes
 
 ```ts
 Route.toList() // → [{ path, name, middleware }, ...]
-Route.list() // console.table(...) for debugging
+Route.toList('/admin') // filtered by path prefix
+Route.list() // console.table(...) for quick debugging
 ```
+
+`Route.getRoutes()` returns the assembled `RouteRecordRaw[]` to hand to
+[`createAppRouter`](/api/#createapprouter-options).

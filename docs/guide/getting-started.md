@@ -16,8 +16,9 @@ provides them.
 ## A client-side router
 
 This is a router for single-page apps. Every route is reached by **navigation**,
-so the only verb is `get` (plus `view`, `redirect`, `fallback`, and `resource`).
-There are no `post`/`put`/`delete` methods — those are server concerns.
+so the only verb is `get` (plus `view`, `redirect`, `fallback`, `resource`, and
+`singleton`). There are no `post`/`put`/`delete` methods — those are server
+concerns. See [Why vue-routing](/guide/why) for the full rationale.
 
 ## Define your routes
 

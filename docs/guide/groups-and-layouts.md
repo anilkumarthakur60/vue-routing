@@ -40,6 +40,37 @@ Route.name('admin.').group(() => {
 })
 ```
 
+`name()` and `asPrefix()` are aliases.
+
+### Options-object form
+
+Instead of chaining, you can pass the group attributes as an object:
+
+```ts
+Route.group({ prefix: 'admin', namePrefix: 'admin', middleware: [auth] }, () => {
+  Route.view('users', UsersPage).name('users')
+})
+```
+
+Accepted keys mirror the chainable methods: `prefix`, `namePrefix`, `middleware`,
+`excludedMiddleware`, `where`, `domain`, `layout`, `scopeBindings`,
+`withoutScopedBindings`, `missing`.
+
+### Available group attributes
+
+| Method                       | Effect                                                                                      |
+| ---------------------------- | ------------------------------------------------------------------------------------------- |
+| `prefix(uri)`                | Prefix every URI in the group.                                                              |
+| `name(p)` / `asPrefix(p)`    | Prefix every route name.                                                                    |
+| `middleware(...fns)`         | Run middleware for every route. ([Middleware](/guide/middleware))                           |
+| `withoutMiddleware(...fns)`  | Remove inherited middleware for the group.                                                  |
+| `layout(c)` / `component(c)` | Wrap the group in a layout.                                                                 |
+| `domain(pattern)`            | Constrain the subdomain. ([Subdomains](/guide/subdomains))                                  |
+| `where` / `whereNumber` …    | Group-wide constraints. ([Constraints](/guide/constraints))                                 |
+| `scopeBindings()`            | Scope child bindings to the parent. ([Model Binding](/guide/model-binding#scoped-bindings)) |
+| `withoutScopedBindings()`    | Disable scoped child bindings.                                                              |
+| `missing(handler)`           | Shared missing-model handler for the group.                                                 |
+
 ## Layouts
 
 `layout(Component)` wraps a group's routes in a parent route that renders

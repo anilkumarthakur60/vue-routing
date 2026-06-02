@@ -11,19 +11,37 @@ export default defineConfig({
     nav: [
       { text: 'Guide', link: '/guide/getting-started' },
       { text: 'API', link: '/api/' },
+      { text: 'npm', link: 'https://www.npmjs.com/package/@anil-labs/vue-routing' },
     ],
     sidebar: {
       '/guide/': [
         {
           text: 'Introduction',
-          items: [{ text: 'Getting Started', link: '/guide/getting-started' }],
+          items: [
+            { text: 'Getting Started', link: '/guide/getting-started' },
+            { text: 'Why vue-routing', link: '/guide/why' },
+          ],
         },
         {
-          text: 'Core Concepts',
+          text: 'Routing',
           items: [
-            { text: 'Routing', link: '/guide/routing' },
+            { text: 'Defining Routes', link: '/guide/routing' },
+            { text: 'Parameters & Constraints', link: '/guide/constraints' },
+            { text: 'Named Routes & URLs', link: '/guide/url-generation' },
+            { text: 'Resources', link: '/guide/resources' },
+          ],
+        },
+        {
+          text: 'Structure',
+          items: [
             { text: 'Groups & Layouts', link: '/guide/groups-and-layouts' },
             { text: 'Middleware', link: '/guide/middleware' },
+            { text: 'Subdomains', link: '/guide/subdomains' },
+          ],
+        },
+        {
+          text: 'Data & Components',
+          items: [
             { text: 'Model Binding', link: '/guide/model-binding' },
             { text: 'Composables', link: '/guide/composables' },
           ],
@@ -33,8 +51,13 @@ export default defineConfig({
     },
     socialLinks: [{ icon: 'github', link: 'https://github.com/anil-labs/vue-routing' }],
     search: { provider: 'local' },
+    editLink: {
+      pattern: 'https://github.com/anil-labs/vue-routing/edit/main/docs/:path',
+      text: 'Edit this page on GitHub',
+    },
     footer: {
       message: 'Released under the MIT License.',
+      copyright: 'Copyright © Anil Kumar Thakur',
     },
   },
 })

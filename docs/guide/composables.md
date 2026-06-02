@@ -18,13 +18,29 @@ const name = useRouteName() // ComputedRef<string | undefined>
 </template>
 ```
 
-## `useIsRoute(name)`
+## `useRouteAction()`
 
-A reactive predicate — handy for active states.
+The current route's resourceful action (`index` / `show` / `create` / `edit`)
+when it was registered via [`resource()`](/guide/resources) or `singleton()`,
+else `undefined` — Laravel's `currentRouteAction()`.
+
+```ts
+import { useRouteAction } from '@anil-labs/vue-routing'
+const action = useRouteAction() // ComputedRef<string | undefined>
+// one component, branching on the action it's serving
+```
+
+## `useIsRoute(...patterns)`
+
+A reactive predicate — handy for active nav states. Patterns may use `*` as a
+wildcard (Laravel's `routeIs`), and you can pass several:
 
 ```ts
 import { useIsRoute } from '@anil-labs/vue-routing'
-const onDashboard = useIsRoute('dashboard') // ComputedRef<boolean>
+
+const onDashboard = useIsRoute('dashboard') // exact
+const inUsers = useIsRoute('users.*') // wildcard: users.index, users.show, …
+const inEither = useIsRoute('posts.*', 'tags.*') // any of several
 ```
 
 ## `useBoundModels<T>()`
