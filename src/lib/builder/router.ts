@@ -32,6 +32,10 @@ export class Router {
     return this.root().middleware(...middlewares)
   }
 
+  public withoutMiddleware(...middlewares: MiddlewareFn[]): RouteRegistrar {
+    return this.root().withoutMiddleware(...middlewares)
+  }
+
   public prefix(prefix: string): RouteRegistrar {
     return this.root().prefix(prefix)
   }

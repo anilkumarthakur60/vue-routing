@@ -45,6 +45,13 @@ export class RouteRegistrar {
     return this.with({ middleware: [...(this.attributes.middleware ?? []), ...middlewares] })
   }
 
+  /** Exclude inherited middleware from the group (Laravel's `withoutMiddleware`). */
+  public withoutMiddleware(...middlewares: MiddlewareFn[]): RouteRegistrar {
+    return this.with({
+      excludedMiddleware: [...(this.attributes.excludedMiddleware ?? []), ...middlewares],
+    })
+  }
+
   /** Prefix the URI of every route in the group. */
   public prefix(prefix: string): RouteRegistrar {
     return this.with({ prefix })

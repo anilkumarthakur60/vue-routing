@@ -3,13 +3,20 @@
  * record. No state, no tree, no naming — just "what the record looks like".
  */
 import type { RouteMeta, RouteRecordRaw } from 'vue-router'
-import type { ResolvedContext, RouteComponent } from '@/lib/types'
+import type { MiddlewareFn, ResolvedContext, RouteComponent } from '@/lib/types'
 import { applyWhereConstraints, convertLaravelParams, joinPaths } from '@/lib/path'
 
 /** A built record plus its clean absolute path (for naming / URL generation). */
 export interface BuiltRecord {
   record: RouteRecordRaw
   absolutePath: string
+}
+
+/** The group middleware that actually applies, minus anything excluded. */
+function applicableMiddleware(context: ResolvedContext): MiddlewareFn[] {
+  if (context.excludedMiddleware.length === 0) return [...context.middleware]
+  const excluded = new Set(context.excludedMiddleware)
+  return context.middleware.filter((middleware) => !excluded.has(middleware))
 }
 
 /** Build a navigable (GET) component record. */
@@ -24,11 +31,12 @@ export function buildRouteRecord(
   const routingPath = applyWhereConstraints(absolutePath, context.where, globalPatterns)
 
   const meta: RouteMeta = {
-    middleware: [...context.middleware],
+    middleware: applicableMiddleware(context),
     where: context.where,
     scopeBindings: context.scopeBindings,
     withoutScopedBindings: context.withoutScopedBindings,
   }
+  if (context.excludedMiddleware.length) meta.excludedMiddleware = [...context.excludedMiddleware]
   if (action !== undefined) meta.action = action
   if (context.domain !== undefined) meta.domain = context.domain
   if (context.missing !== undefined) meta.missing = context.missing
@@ -47,7 +55,9 @@ export function buildRedirectRecord(
   const absolutePath = joinPaths(context.prefix, convertLaravelParams(from))
 
   const meta: RouteMeta = { redirectStatus: status, isRedirect: true }
-  if (context.middleware.length) meta.middleware = [...context.middleware]
+  const middleware = applicableMiddleware(context)
+  if (middleware.length) meta.middleware = middleware
+  if (context.excludedMiddleware.length) meta.excludedMiddleware = [...context.excludedMiddleware]
 
   const record = { path: absolutePath, redirect: to, meta } as RouteRecordRaw
   return { record, absolutePath }
@@ -58,7 +68,8 @@ export function buildFallbackRecord(
   context: ResolvedContext,
   component: RouteComponent,
 ): BuiltRecord {
-  const meta: RouteMeta = { isFallback: true, middleware: [...context.middleware] }
+  const meta: RouteMeta = { isFallback: true, middleware: applicableMiddleware(context) }
+  if (context.excludedMiddleware.length) meta.excludedMiddleware = [...context.excludedMiddleware]
   if (context.missing !== undefined) meta.missing = context.missing
 
   const path = '/:pathMatch(.*)*'

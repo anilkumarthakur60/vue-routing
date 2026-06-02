@@ -13,6 +13,7 @@ export function mergeContext(levels: readonly GroupAttributes[]): ResolvedContex
     prefix: '',
     namePrefix: '',
     middleware: [],
+    excludedMiddleware: [],
     where: {},
     domain: undefined,
     layouts: [],
@@ -25,6 +26,7 @@ export function mergeContext(levels: readonly GroupAttributes[]): ResolvedContex
     if (level.prefix) context.prefix = joinPaths(context.prefix, convertLaravelParams(level.prefix))
     if (level.namePrefix) context.namePrefix = appendRouteName(context.namePrefix, level.namePrefix)
     if (level.middleware?.length) context.middleware.push(...level.middleware)
+    if (level.excludedMiddleware?.length) context.excludedMiddleware.push(...level.excludedMiddleware)
     if (level.where) context.where = { ...context.where, ...level.where }
     if (level.domain !== undefined) context.domain = level.domain
     if (level.layout) context.layouts.push(level.layout)
