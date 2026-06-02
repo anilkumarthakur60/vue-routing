@@ -15,6 +15,37 @@ beforeEach(() => {
   Route.flush()
 })
 
+describe('createAppRouter — configuration', () => {
+  it('builds a working router in memory history mode', () => {
+    Route.view('home', Home).name('home')
+    const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
+    expect(typeof router.push).toBe('function')
+    expect(typeof router.beforeEach).toBe('function')
+  })
+
+  it('runs the guard pipeline in order: middleware before binding resolution', async () => {
+    const order: string[] = []
+    const trace: MiddlewareFn = () => {
+      order.push('middleware')
+      return true
+    }
+    Route.middleware(trace).group(() => {
+      Route.get('users/{user}', UserPage).name('users.show')
+    })
+    Route.bind('user', () => {
+      order.push('binding')
+      return { id: 1 }
+    })
+    const router = createAppRouter({
+      routes: Route.getRoutes(),
+      historyMode: 'memory',
+      bindings: Route.getBindings(),
+    })
+    await router.push('/users/1')
+    expect(order).toEqual(['middleware', 'binding'])
+  })
+})
+
 describe('createAppRouter — middleware pipeline', () => {
   it('runs middleware for matched routes', async () => {
     const visited: string[] = []
