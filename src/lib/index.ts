@@ -39,11 +39,28 @@ export {
 } from '@/lib/runtime'
 
 // Composables
-export { useRouteName, useIsRoute, useBoundModels, useSubdomainParams } from '@/lib/composables'
+export {
+  useRouteName,
+  useRouteAction,
+  useIsRoute,
+  useBoundModels,
+  useSubdomainParams,
+} from '@/lib/composables'
 
 // Constants + their types
-export { RESOURCE_ACTIONS, RESOURCE_ACTION_MAP, patterns } from '@/lib/constants'
-export type { ResourceAction, ResourceActionConfig, PatternName } from '@/lib/constants'
+export {
+  RESOURCE_ACTIONS,
+  RESOURCE_ACTION_MAP,
+  SINGLETON_ACTIONS,
+  SINGLETON_ACTION_MAP,
+  patterns,
+} from '@/lib/constants'
+export type {
+  ResourceAction,
+  ResourceActionConfig,
+  SingletonAction,
+  PatternName,
+} from '@/lib/constants'
 
 // Public types
 export type {
@@ -52,6 +69,7 @@ export type {
   MiddlewareFn,
   MissingHandler,
   BindingResolver,
+  BindingResolverContext,
   AppRouteMeta,
   GroupAttributes,
   ResolvedContext,
@@ -64,7 +82,7 @@ export type {
 } from '@/lib/types'
 
 // Tree-shakeable pure utilities
-export { splitWords, pluralize, appendRouteName } from '@/lib/text'
+export { splitWords, pluralize, singularize, appendRouteName } from '@/lib/text'
 export {
   collapseSlashes,
   ensureLeadingSlash,

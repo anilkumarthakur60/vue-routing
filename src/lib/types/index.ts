@@ -4,6 +4,7 @@ export type {
   MiddlewareFn,
   MissingHandler,
   BindingResolver,
+  BindingResolverContext,
 } from '@/lib/types/navigation'
 export type { AppRouteMeta } from '@/lib/types/meta'
 export type { GroupAttributes, ResolvedContext } from '@/lib/types/group'

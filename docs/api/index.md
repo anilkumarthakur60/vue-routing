@@ -68,8 +68,7 @@ Returned by route-definition methods; chainable.
 `name(v)` · `as(v)` · `middleware(...fns)` · `withoutMiddleware(...fns)` ·
 `where(map)` · `whereNumber/whereAlpha/whereAlphaNumeric/whereUuid/whereUlid(...params)` ·
 `whereIn(param, values)` · `missing(handler)` · `scopeBindings()` ·
-`withoutScopedBindings()` · `withTrashed()` · `record` (the underlying
-`RouteRecordRaw`).
+`withoutScopedBindings()` · `record` (the underlying `RouteRecordRaw`).
 
 ## `createAppRouter(options)`
 

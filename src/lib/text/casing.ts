@@ -20,3 +20,19 @@ export function pluralize(word: string): string {
   if (/o$/i.test(word)) return `${word}es`
   return `${word}s`
 }
+
+/**
+ * Naive English singularization — the inverse of {@link pluralize}, covering the
+ * common cases (used to derive a resource's route parameter, e.g.
+ * `users` → `user`, `categories` → `category`). Pass `parameters` to
+ * `resource()` to override irregular cases.
+ */
+export function singularize(word: string): string {
+  if (/ies$/i.test(word)) return word.replace(/ies$/i, 'y')
+  if (/ves$/i.test(word)) return word.replace(/ves$/i, 'f')
+  if (/(?:sses|shes|ches|xes|zes)$/i.test(word)) return word.replace(/es$/i, '')
+  if (/[^aeiou]oes$/i.test(word)) return word.replace(/es$/i, '')
+  if (/ss$/i.test(word)) return word
+  if (/s$/i.test(word)) return word.replace(/s$/i, '')
+  return word
+}

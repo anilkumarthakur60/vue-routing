@@ -181,8 +181,8 @@ describe('resourceful routing', () => {
     const byName = Object.fromEntries(rows.map((row) => [row.name, row.path]))
     expect(byName['posts.index']).toBe('/posts')
     expect(byName['posts.create']).toBe('/posts/create')
-    expect(byName['posts.show']).toBe('/posts/:id')
-    expect(byName['posts.edit']).toBe('/posts/:id/edit')
+    expect(byName['posts.show']).toBe('/posts/:post')
+    expect(byName['posts.edit']).toBe('/posts/:post/edit')
     // No store/update/destroy — those are server-side mutations with no page.
     expect(rows).toHaveLength(4)
   })
@@ -193,7 +193,26 @@ describe('resourceful routing', () => {
     const rows = Route.toList()
     expect(rows).toHaveLength(2)
     const show = Route.toList().find((row) => row.name === 'books.show')
-    expect(show?.path).toBe('/books/:id')
+    expect(show?.path).toBe('/books/:book')
+  })
+
+  it('uses the singularized resource name as the route parameter', () => {
+    Route.resource('categories', Home)
+    const show = Route.toList().find((row) => row.name === 'categories.show')
+    expect(show?.path).toBe('/categories/:category')
+  })
+
+  it('supports nested (dot-notation) resources', () => {
+    Route.resource('photos.comments', Home)
+    const byName = Object.fromEntries(Route.toList().map((row) => [row.name, row.path]))
+    expect(byName['photos.comments.index']).toBe('/photos/:photo/comments')
+    expect(byName['photos.comments.show']).toBe('/photos/:photo/comments/:comment')
+  })
+
+  it('allows overriding the resource parameter name', () => {
+    Route.resource('users', Home, { parameters: { users: 'admin_user' } })
+    const show = Route.toList().find((row) => row.name === 'users.show')
+    expect(show?.path).toBe('/users/:admin_user')
   })
 })
 

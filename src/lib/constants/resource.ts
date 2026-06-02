@@ -18,12 +18,30 @@ export interface ResourceActionConfig {
 }
 
 /**
- * Canonical resource map. URIs use Laravel `{param}` syntax; the path compiler
- * converts them to vue-router `:param` syntax at registration time.
+ * Canonical resource map. The literal `{param}` placeholder is replaced with the
+ * resource's actual route parameter (the singularized name, e.g. `{user}`) at
+ * registration time; the path compiler then converts `{user}` → `:user`.
  */
 export const RESOURCE_ACTION_MAP: Readonly<Record<ResourceAction, ResourceActionConfig>> = {
   index: { uri: '' },
   create: { uri: '/create' },
-  show: { uri: '/{id}' },
-  edit: { uri: '/{id}/edit' },
+  show: { uri: '/{param}' },
+  edit: { uri: '/{param}/edit' },
+}
+
+/**
+ * The navigable singleton-resource actions (Laravel's `Route::singleton`). A
+ * singleton has no identifier, so `show` is the bare resource URI. `create` is
+ * only registered when the singleton is `creatable`.
+ */
+export const SINGLETON_ACTIONS = ['create', 'show', 'edit'] as const
+
+/** A single navigable singleton-resource action. */
+export type SingletonAction = (typeof SINGLETON_ACTIONS)[number]
+
+/** Canonical singleton-resource map — note `show` carries no `{param}`. */
+export const SINGLETON_ACTION_MAP: Readonly<Record<SingletonAction, ResourceActionConfig>> = {
+  create: { uri: '/create' },
+  show: { uri: '' },
+  edit: { uri: '/edit' },
 }

@@ -147,6 +147,18 @@ export class Router {
     return this.root().resource(name, component, options)
   }
 
+  public resources(map: Record<string, RouteComponent>, options?: ResourceOptions): RouteRegistrar {
+    return this.root().resources(map, options)
+  }
+
+  public singleton(
+    name: string,
+    component: RouteComponent,
+    options?: ResourceOptions,
+  ): RouteRegistrar {
+    return this.root().singleton(name, component, options)
+  }
+
   // ── Global parameter patterns ────────────────────────────────────────────────
 
   /** Define a global constraint applied to every matching parameter name. */

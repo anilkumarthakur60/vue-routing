@@ -5,7 +5,7 @@
  * in isolation.
  */
 import type { NavigationGuard, NavigationGuardReturn, RouteLocationNormalized } from 'vue-router'
-import type { BindingResolver, MissingHandler } from '@/lib/types'
+import type { BindingResolver, BindingResolverContext, MissingHandler } from '@/lib/types'
 import { collectMiddleware, runMiddleware } from '@/lib/runtime/middleware-runner'
 import { domainToRegExp } from '@/lib/path'
 
@@ -41,9 +41,10 @@ function checkDomains(to: RouteLocationNormalized): NavigationGuardReturn {
 
 /**
  * Resolve every route parameter that has a registered binding, attaching the
- * resolved models to the merged location meta (`to.meta.bound`). If any
- * resolver returns `null`/`undefined`, the route's `missing()` handler runs (or
- * navigation is cancelled).
+ * resolved models to the merged location meta (`to.meta.bound`). Parameters are
+ * resolved in path order (parent → child) so a scoped child resolver can see
+ * its parent. If any resolver returns `null`/`undefined`, the route's
+ * `missing()` handler runs (or navigation is cancelled).
  */
 async function resolveBindings(
   bindings: Map<string, BindingResolver>,
@@ -51,6 +52,9 @@ async function resolveBindings(
   from: RouteLocationNormalized,
 ): Promise<NavigationGuardReturn> {
   const bound: Record<string, unknown> = {}
+  const fields = collectBindingFields(to)
+  const scoped = isScoped(to)
+  let parent: unknown = undefined
 
   for (const [param, value] of Object.entries(to.params)) {
     const resolver = bindings.get(param)
@@ -59,15 +63,34 @@ async function resolveBindings(
     const raw = Array.isArray(value) ? value[0] : value
     if (raw === undefined) continue
 
-    const model = await resolver(raw, to)
+    const context: BindingResolverContext = {
+      field: fields[param],
+      parent: scoped ? parent : undefined,
+      bound,
+    }
+    const model = await resolver(raw, to, context)
     if (model === null || model === undefined) {
       return handleMissing(to, from)
     }
     bound[param] = model
+    parent = model
   }
 
   to.meta.bound = bound
   return true
+}
+
+/** Merge the custom binding columns (`{param:field}`) from all matched records. */
+function collectBindingFields(to: RouteLocationNormalized): Record<string, string> {
+  const fields: Record<string, string> = {}
+  for (const record of to.matched) Object.assign(fields, record.meta.bindingFields)
+  return fields
+}
+
+/** Whether scoped bindings apply: opted in somewhere and not explicitly disabled. */
+function isScoped(to: RouteLocationNormalized): boolean {
+  if (to.matched.some((record) => record.meta.withoutScopedBindings)) return false
+  return to.matched.some((record) => record.meta.scopeBindings)
 }
 
 /** Run the nearest `missing()` handler, or cancel navigation. */

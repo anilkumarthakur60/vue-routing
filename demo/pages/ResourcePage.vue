@@ -7,7 +7,7 @@ import { useRoute } from 'vue-router'
 
 const name = useRouteName()
 const route = useRoute()
-const id = computed(() => route.params['id'])
+const id = computed(() => route.params['post'])
 </script>
 
 <template>
@@ -27,8 +27,12 @@ const id = computed(() => route.params['id'])
     <div class="pill-row">
       <router-link class="btn" :to="{ name: 'posts.index' }">index</router-link>
       <router-link class="btn" :to="{ name: 'posts.create' }">create</router-link>
-      <router-link class="btn" :to="{ name: 'posts.show', params: { id: 5 } }">show #5</router-link>
-      <router-link class="btn" :to="{ name: 'posts.edit', params: { id: 5 } }">edit #5</router-link>
+      <router-link class="btn" :to="{ name: 'posts.show', params: { post: 5 } }"
+        >show #5</router-link
+      >
+      <router-link class="btn" :to="{ name: 'posts.edit', params: { post: 5 } }"
+        >edit #5</router-link
+      >
     </div>
   </div>
 </template>

@@ -4,7 +4,12 @@
  */
 import type { RouteMeta, RouteRecordRaw } from 'vue-router'
 import type { MiddlewareFn, ResolvedContext, RouteComponent } from '@/lib/types'
-import { applyWhereConstraints, convertLaravelParams, joinPaths } from '@/lib/path'
+import {
+  applyWhereConstraints,
+  convertLaravelParams,
+  extractBindingFields,
+  joinPaths,
+} from '@/lib/path'
 
 /** A built record plus its clean absolute path (for naming / URL generation). */
 export interface BuiltRecord {
@@ -37,6 +42,8 @@ export function buildRouteRecord(
     withoutScopedBindings: context.withoutScopedBindings,
   }
   if (context.excludedMiddleware.length) meta.excludedMiddleware = [...context.excludedMiddleware]
+  const bindingFields = extractBindingFields(uri)
+  if (Object.keys(bindingFields).length) meta.bindingFields = bindingFields
   if (action !== undefined) meta.action = action
   if (context.domain !== undefined) meta.domain = context.domain
   if (context.missing !== undefined) meta.missing = context.missing

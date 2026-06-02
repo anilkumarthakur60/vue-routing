@@ -14,7 +14,7 @@ import type {
   RouteDefinitionHost,
 } from '@/lib/types'
 import type { PatternName } from '@/lib/constants'
-import { applyWhereConstraints, patternConstraints } from '@/lib/path'
+import { applyWhereConstraints, patternConstraints, type ParamValue } from '@/lib/path'
 import { appendRouteName } from '@/lib/text'
 
 export class RouteDefinition {
@@ -118,6 +118,26 @@ export class RouteDefinition {
     return this
   }
 
+  // ── URL generation ────────────────────────────────────────────────────────
+
+  /**
+   * Provide default values for route parameters, used during URL generation
+   * when a value is not supplied (Laravel's `->defaults()`). Accepts either a
+   * single `key`/`value` pair or a map.
+   */
+  public defaults(key: string, value: ParamValue): this
+  public defaults(values: Record<string, ParamValue>): this
+  public defaults(keyOrValues: string | Record<string, ParamValue>, value?: ParamValue): this {
+    const next = { ...(this.meta.defaults ?? {}) }
+    if (typeof keyOrValues === 'string') {
+      if (value !== undefined) next[keyOrValues] = value
+    } else {
+      Object.assign(next, keyOrValues)
+    }
+    this.meta.defaults = next
+    return this
+  }
+
   /** Scope nested child bindings to their parent. */
   public scopeBindings(): this {
     this.meta.scopeBindings = true
@@ -127,12 +147,6 @@ export class RouteDefinition {
   /** Explicitly disable scoped child bindings. */
   public withoutScopedBindings(): this {
     this.meta.withoutScopedBindings = true
-    return this
-  }
-
-  /** Allow soft-deleted models to be resolved for this route. */
-  public withTrashed(): this {
-    this.meta.withTrashed = true
     return this
   }
 

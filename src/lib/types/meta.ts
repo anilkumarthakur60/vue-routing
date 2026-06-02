@@ -12,8 +12,10 @@ export interface AppRouteMeta {
   scopeBindings?: boolean
   /** Whether scoped child bindings are explicitly disabled. */
   withoutScopedBindings?: boolean
-  /** Whether soft-deleted models should be resolvable for this route. */
-  withTrashed?: boolean
+  /** Custom binding columns by parameter, parsed from `{param:field}` segments. */
+  bindingFields?: Record<string, string>
+  /** Default parameter values used during URL generation (Laravel's `defaults()`). */
+  defaults?: Record<string, string | number | boolean>
   /** Handler invoked when a bound model is missing. */
   missing?: MissingHandler
   /** The resourceful action name (`index`, `show`, …) when applicable. */

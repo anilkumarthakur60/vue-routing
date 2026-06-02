@@ -21,7 +21,9 @@ export class NameRegistry {
   public url(name: string, params: Record<string, ParamValue> = {}): string {
     const entry = this.entries.get(name)
     if (!entry) throw new Error(`Route "${name}" is not defined.`)
-    return compileUrl(entry.absolutePath, params)
+    // Per-route defaults fill in any params the caller omitted.
+    const defaults = entry.record.meta?.defaults ?? {}
+    return compileUrl(entry.absolutePath, { ...defaults, ...params })
   }
 
   public clear(): void {

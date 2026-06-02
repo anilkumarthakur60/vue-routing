@@ -7,7 +7,13 @@
  *
  * Client-side router → the only verb is `get` (navigation).
  */
-import { RESOURCE_ACTIONS, RESOURCE_ACTION_MAP, type PatternName } from '@/lib/constants'
+import {
+  RESOURCE_ACTIONS,
+  RESOURCE_ACTION_MAP,
+  SINGLETON_ACTION_MAP,
+  type PatternName,
+  type SingletonAction,
+} from '@/lib/constants'
 import type { RouterCore } from '@/lib/registry'
 import type {
   GroupAttributes,
@@ -17,7 +23,7 @@ import type {
   ResourceOptions,
   RouteComponent,
 } from '@/lib/types'
-import { appendRouteName } from '@/lib/text'
+import { appendRouteName, singularize } from '@/lib/text'
 import { joinPaths, patternConstraints } from '@/lib/path'
 import { RouteDefinition } from '@/lib/builder/route-definition'
 
@@ -178,21 +184,54 @@ export class RouteRegistrar {
 
   // ── Resourceful routing (navigable pages only) ──────────────────────────────
 
-  /** Register the navigable resource routes (index/create/show/edit). */
+  /**
+   * Register the navigable resource routes (index/create/show/edit).
+   *
+   * Supports Laravel's dot-notation for nested resources
+   * (`'photos.comments'` → `photos/{photo}/comments/{comment}`). The route
+   * parameter is the singularized segment name (`users` → `{user}`); override
+   * it per segment via `options.parameters`.
+   */
   public resource(name: string, component: RouteComponent, options: ResourceOptions = {}): this {
     const actions = filterActions(RESOURCE_ACTIONS, options)
-    // Merge the resource name onto any prefix/name already set at this level
-    // (e.g. `Route.prefix('admin').resource('posts', …)` → `/admin/posts`)
-    // instead of overwriting it.
-    const prefix = this.attributes.prefix ? joinPaths(this.attributes.prefix, name) : name
-    const namePrefix = appendRouteName(this.attributes.namePrefix ?? '', name)
+    const { prefix, namePrefix, param } = this.buildResourceLocation(name, options)
+
     this.with({ prefix, namePrefix }).group(() => {
       for (const action of actions) {
-        const config = RESOURCE_ACTION_MAP[action]
+        const uri = RESOURCE_ACTION_MAP[action].uri.replace('{param}', `{${param}}`)
         const actionComponent = options.components?.[action] ?? component
-        this.define(this.core.registerRoute({}, config.uri, actionComponent, action)).name(action)
+        this.define(this.core.registerRoute({}, uri, actionComponent, action)).name(action)
       }
     })
+    return this
+  }
+
+  /**
+   * Register a singleton resource (Laravel's `Route::singleton`) — a resource
+   * with no identifier. Generates the navigable `show` and `edit` actions (plus
+   * `create` when `options.creatable` is set). Supports dot-notation nesting,
+   * e.g. `'photos.thumbnail'` → `photos/{photo}/thumbnail`.
+   */
+  public singleton(name: string, component: RouteComponent, options: ResourceOptions = {}): this {
+    const available: SingletonAction[] = options.creatable
+      ? ['create', 'show', 'edit']
+      : ['show', 'edit']
+    const actions = filterActions(available, options)
+    const { prefix, namePrefix } = this.buildResourceLocation(name, options)
+
+    this.with({ prefix, namePrefix }).group(() => {
+      for (const action of actions) {
+        const uri = SINGLETON_ACTION_MAP[action].uri
+        const actionComponent = options.components?.[action] ?? component
+        this.define(this.core.registerRoute({}, uri, actionComponent, action)).name(action)
+      }
+    })
+    return this
+  }
+
+  /** Register several resources at once (Laravel's `Route::resources([...])`). */
+  public resources(map: Record<string, RouteComponent>, options: ResourceOptions = {}): this {
+    for (const [name, component] of Object.entries(map)) this.resource(name, component, options)
     return this
   }
 
@@ -200,6 +239,36 @@ export class RouteRegistrar {
 
   private wherePattern(params: string[], pattern: PatternName): RouteRegistrar {
     return this.where(patternConstraints(params, pattern))
+  }
+
+  private resourceParam(segment: string, options: ResourceOptions): string {
+    return options.parameters?.[segment] ?? singularize(segment)
+  }
+
+  /**
+   * Resolve a (possibly dotted, possibly nested) resource name into its URI
+   * prefix, route-name prefix, and the leaf parameter — merging onto any
+   * prefix/name already set at this level. Parent segments each contribute
+   * `segment/{parent}`; the leaf contributes just its name.
+   */
+  private buildResourceLocation(
+    name: string,
+    options: ResourceOptions,
+  ): { prefix: string; namePrefix: string; param: string } {
+    const segments = name.split('.')
+    const resourceName = segments[segments.length - 1] ?? name
+    const param = this.resourceParam(resourceName, options)
+
+    let nested = ''
+    for (const segment of segments.slice(0, -1)) {
+      nested = joinPaths(nested, `${segment}/{${this.resourceParam(segment, options)}}`)
+    }
+    nested = joinPaths(nested, resourceName)
+
+    const prefix = this.attributes.prefix ? joinPaths(this.attributes.prefix, nested) : nested
+    const nameBase = options.names ?? segments.join('.')
+    const namePrefix = appendRouteName(this.attributes.namePrefix ?? '', nameBase)
+    return { prefix, namePrefix, param }
   }
 }
 
