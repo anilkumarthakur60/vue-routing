@@ -8,10 +8,6 @@ export class BindingRegistry {
     this.resolvers.set(param, resolver)
   }
 
-  public get(param: string): BindingResolver | undefined {
-    return this.resolvers.get(param)
-  }
-
   /** The underlying map, to hand to {@link createAppRouter}. */
   public all(): Map<string, BindingResolver> {
     return this.resolvers

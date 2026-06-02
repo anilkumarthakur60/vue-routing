@@ -255,18 +255,19 @@ export class RouteRegistrar {
     name: string,
     options: ResourceOptions,
   ): { prefix: string; namePrefix: string; param: string } {
-    const segments = name.split('.')
-    const resourceName = segments[segments.length - 1] ?? name
+    const dot = name.lastIndexOf('.')
+    const resourceName = dot === -1 ? name : name.slice(dot + 1)
+    const parents = dot === -1 ? [] : name.slice(0, dot).split('.')
     const param = this.resourceParam(resourceName, options)
 
     let nested = ''
-    for (const segment of segments.slice(0, -1)) {
+    for (const segment of parents) {
       nested = joinPaths(nested, `${segment}/{${this.resourceParam(segment, options)}}`)
     }
     nested = joinPaths(nested, resourceName)
 
     const prefix = this.attributes.prefix ? joinPaths(this.attributes.prefix, nested) : nested
-    const nameBase = options.names ?? segments.join('.')
+    const nameBase = options.names ?? name
     const namePrefix = appendRouteName(this.attributes.namePrefix ?? '', nameBase)
     return { prefix, namePrefix, param }
   }

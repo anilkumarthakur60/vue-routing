@@ -13,5 +13,18 @@ export default defineConfig({
   test: {
     environment: 'node',
     include: ['tests/**/*.test.ts'],
+    coverage: {
+      provider: 'v8',
+      // Measure the shipped library only — not barrels, tests, demo, or config.
+      include: ['src/lib/**/*.ts'],
+      exclude: ['src/lib/**/index.ts', 'src/lib/types/**'],
+      reporter: ['text', 'html'],
+      thresholds: {
+        statements: 100,
+        branches: 100,
+        functions: 100,
+        lines: 100,
+      },
+    },
   },
 })

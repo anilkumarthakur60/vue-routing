@@ -13,6 +13,7 @@ export default defineConfigWithVueTs(
     ignores: [
       '**/dist/**',
       '**/demo-dist/**',
+      '**/coverage/**',
       '**/node_modules/**',
       '**/docs/**',
       '**/*.config.ts',

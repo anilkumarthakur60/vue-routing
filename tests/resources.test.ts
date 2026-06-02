@@ -73,6 +73,13 @@ describe('resource() — nesting & merging', () => {
     expect(map['admin.posts.index']).toBe('/admin/posts')
     expect(map['admin.posts.show']).toBe('/admin/posts/:post')
   })
+
+  it('merges a same-level prefix/name set directly on the chain', () => {
+    Route.prefix('admin').asPrefix('admin').resource('posts', Page)
+    const map = routeMap()
+    expect(map['admin.posts.index']).toBe('/admin/posts')
+    expect(map['admin.posts.show']).toBe('/admin/posts/:post')
+  })
 })
 
 describe('resources() — bulk registration', () => {

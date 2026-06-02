@@ -46,6 +46,34 @@ describe('explicit binding resolution', () => {
     await router.push('/users/5')
     expect(router.currentRoute.value.name).toBe('users.index')
   })
+
+  it('cancels when missing() returns nothing', async () => {
+    Route.view('home', Page).name('home')
+    Route.get('users/{user}', Page)
+      .name('users.show')
+      .missing(() => undefined)
+    Route.bind('user', () => null)
+    const router = build()
+    await router.push('/home')
+    await router.push('/users/5').catch(() => undefined)
+    expect(router.currentRoute.value.name).toBe('home')
+  })
+
+  it('ignores params that have no registered resolver', async () => {
+    Route.get('a/{b}', Page).name('a.show')
+    Route.bind('user', () => ({ id: 1 })) // a different param, so bindings map is non-empty
+    const router = build()
+    await router.push('/a/42')
+    expect(router.currentRoute.value.meta.bound).toEqual({})
+  })
+
+  it('resolves the first segment of an array (repeatable) param', async () => {
+    Route.get('files/:path(.*)*', Page).name('files.show')
+    Route.bind('path', (value) => ({ first: value }))
+    const router = build()
+    await router.push('/files/a/b/c')
+    expect(router.currentRoute.value.meta.bound).toEqual({ path: { first: 'a' } })
+  })
 })
 
 describe('custom binding key {param:field}', () => {

@@ -43,6 +43,13 @@ describe('useRouteName', () => {
     await router.push('/home')
     expect(read(router, useRouteName).value).toBe('home')
   })
+
+  it('is undefined on an unnamed route', async () => {
+    Route.get('anon', Page) // no .name()
+    const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
+    await router.push('/anon')
+    expect(read(router, useRouteName).value).toBeUndefined()
+  })
 })
 
 describe('useRouteAction', () => {
@@ -81,6 +88,25 @@ describe('useBoundModels', () => {
     await router.push('/users/1')
     const models = read(router, () => useBoundModels<{ user: { id: number; name: string } }>())
     expect(models.value.user).toEqual({ id: 1, name: 'Ada' })
+  })
+
+  it('is an empty object when no bindings resolved', async () => {
+    Route.view('home', Page).name('home')
+    const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
+    await router.push('/home')
+    expect(read(router, () => useBoundModels()).value).toEqual({})
+  })
+})
+
+describe('domain guard', () => {
+  it('cancels navigation when the hostname does not match the route domain', async () => {
+    window.location.href = 'https://evil.com/dashboard'
+    Route.domain('{account}.example.com').group(() => {
+      Route.view('secure', Page).name('secure')
+    })
+    const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
+    await router.push('/secure').catch(() => undefined)
+    expect(router.currentRoute.value.name).not.toBe('secure')
   })
 })
 

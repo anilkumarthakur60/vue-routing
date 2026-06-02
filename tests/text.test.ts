@@ -35,6 +35,10 @@ describe('singularize', () => {
     expect(singularize('boxes')).toBe('box')
     expect(singularize('photos')).toBe('photo')
     expect(singularize('comments')).toBe('comment')
+    expect(singularize('wolves')).toBe('wolf') // ves → f
+    expect(singularize('dishes')).toBe('dish') // shes → ''
+    expect(singularize('glasses')).toBe('glass') // sses → ''
+    expect(singularize('heroes')).toBe('hero') // [^aeiou]oes → ''
   })
 
   it('leaves already-singular or invariant words alone', () => {
