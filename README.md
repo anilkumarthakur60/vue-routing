@@ -116,7 +116,7 @@ const models = useBoundModels<{ user: User }>()
 
 ### Composables
 
-`useRouteName()`, `useIsRoute(name)`, `useBoundModels<T>()`, `useSubdomainParams()` — all reactive; call within `setup()`.
+`useRouteName()`, `useRouteAction()`, `useIsRoute(name)`, `useBoundModels<T>()`, `useSubdomainParams()` — all reactive; call within `setup()`.
 
 ## Type safety
 

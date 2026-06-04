@@ -49,10 +49,10 @@ export default defineConfig({
       ],
       '/api/': [{ text: 'Reference', items: [{ text: 'API', link: '/api/' }] }],
     },
-    socialLinks: [{ icon: 'github', link: 'https://github.com/anil-labs/vue-routing' }],
+    socialLinks: [{ icon: 'github', link: 'https://github.com/anilkumarthakur60/vue-routing' }],
     search: { provider: 'local' },
     editLink: {
-      pattern: 'https://github.com/anil-labs/vue-routing/edit/main/docs/:path',
+      pattern: 'https://github.com/anilkumarthakur60/vue-routing/edit/main/docs/:path',
       text: 'Edit this page on GitHub',
     },
     footer: {

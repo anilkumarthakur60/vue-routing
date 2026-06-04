@@ -13,13 +13,14 @@
     "middleware"
   ],
   "license": "MIT",
+  "author": "Anil Kumar Thakur (https://github.com/anilkumarthakur60)",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/anil-labs/vue-routing.git"
+    "url": "git+https://github.com/anilkumarthakur60/vue-routing.git"
   },
-  "homepage": "https://github.com/anil-labs/vue-routing#readme",
+  "homepage": "https://github.com/anilkumarthakur60/vue-routing#readme",
   "bugs": {
-    "url": "https://github.com/anil-labs/vue-routing/issues"
+    "url": "https://github.com/anilkumarthakur60/vue-routing/issues"
   },
   "engines": {
     "node": ">=20.19.0"
@@ -31,19 +32,25 @@
   "files": [
     "dist"
   ],
-  "main": "./dist/vue-routing.umd.cjs",
-  "module": "./dist/vue-routing.js",
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/vue-routing.js",
-      "require": "./dist/vue-routing.umd.cjs"
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
     }
   },
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
+    "build": "tsup",
     "prepublishOnly": "npm run build",
     "preview": "vite preview",
     "build:demo": "vue-tsc -b && vite build --config vite.demo.config.ts",
@@ -77,10 +84,10 @@
     "eslint-plugin-vue": "^10.9.1",
     "happy-dom": "^20.0.0",
     "prettier": "^3.8.3",
+    "tsup": "^8.5.1",
     "typescript": "~6.0.2",
     "typescript-eslint": "^8.60.0",
     "vite": "^8.0.12",
-    "vite-plugin-dts": "^5.0.1",
     "vitepress": "^1.6.4",
     "vitest": "^3.2.4",
     "vue": "^3.5.34",

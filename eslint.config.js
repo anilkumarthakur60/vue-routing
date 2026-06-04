@@ -16,6 +16,7 @@ export default defineConfigWithVueTs(
       '**/coverage/**',
       '**/node_modules/**',
       '**/docs/**',
+      '**/scripts/**',
       '**/*.config.ts',
       'eslint.config.js',
     ],
