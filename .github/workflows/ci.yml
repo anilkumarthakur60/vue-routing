@@ -5,46 +5,36 @@ on:
     branches: [main]
   pull_request:
 
-# Cancel superseded runs on the same ref.
-concurrency:
-  group: ci-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
-  verify:
-    name: Lint, typecheck, test & build
+  ci:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        node-version: [20, 22]
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Setup Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: npm
+          node-version: lts/*
+          cache: pnpm
 
-      - name: Install dependencies
-        run: npm ci
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Build
+        run: pnpm build
 
       - name: Lint
-        run: npm run lint
+        run: pnpm lint
 
-      - name: Check formatting
-        run: npm run format:check
+      - name: Format check
+        run: pnpm format:check
 
       - name: Typecheck
-        run: npm run typecheck
+        run: pnpm typecheck
 
       - name: Test
-        run: npm test
+        run: pnpm test
 
-      - name: Build library
-        run: npm run build
-
-      - name: Build demo
-        run: npm run build:demo
+      - name: Build examples
+        run: pnpm --filter "example-*" -r build
