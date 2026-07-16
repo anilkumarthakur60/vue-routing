@@ -1,6 +1,6 @@
 import { computed, type ComputedRef } from 'vue'
 import { useRoute } from 'vue-router'
-import { matchDomain } from '@/lib/path'
+import { matchDomain } from '@/path'
 
 /**
  * Parameters captured from the subdomain for the current route's `domain`

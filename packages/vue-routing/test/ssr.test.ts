@@ -2,8 +2,13 @@ import { beforeEach, describe, expect, it } from 'vitest'
 import { createApp } from 'vue'
 import type { Component } from 'vue'
 import type { RouteLocationNormalized } from 'vue-router'
-import { Route, createAppRouter, createNavigationGuard, useSubdomainParams } from '@/lib'
-import type { BindingResolver } from '@/lib'
+import {
+  Route,
+  createAppRouter,
+  createNavigationGuard,
+  useSubdomainParams,
+} from '@anil-labs/vue-routing'
+import type { BindingResolver } from '@anil-labs/vue-routing'
 
 const stub = (name: string): Component => ({ name, render: () => null })
 const Page = stub('Page')

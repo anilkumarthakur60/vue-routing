@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { Component } from 'vue'
-import { Route, patterns } from '@/lib'
+import { Route, patterns } from '@anil-labs/vue-routing'
 
 const stub = (name: string): Component => ({ name, render: () => null })
 const Page = stub('Page')

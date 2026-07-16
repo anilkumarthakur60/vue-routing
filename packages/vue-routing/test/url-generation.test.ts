@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { Component } from 'vue'
-import { Route } from '@/lib'
+import { Route } from '@anil-labs/vue-routing'
 
 const stub = (name: string): Component => ({ name, render: () => null })
 const Page = stub('Page')
@@ -33,6 +33,37 @@ describe('Route.route()', () => {
     Route.get('posts/{id}', Page).name('posts.show')
     expect(() => Route.route('posts.show')).toThrow(/Missing required parameter "id"/)
     expect(() => Route.route('nope')).toThrow(/not defined/)
+  })
+})
+
+describe('wildcard fallback URL generation (audit: route("NotFound") threw)', () => {
+  it('generates the root path for the fallback with no params', () => {
+    Route.fallback(Page)
+    expect(Route.route('NotFound')).toBe('/')
+  })
+
+  it('substitutes a catch-all value segment by segment', () => {
+    Route.fallback(Page)
+    expect(Route.route('NotFound', { pathMatch: 'x/y' })).toBe('/x/y')
+    expect(Route.route('NotFound', { pathMatch: 'a b/c' })).toBe('/a%20b/c')
+  })
+
+  it('handles a user-defined catch-all route', () => {
+    Route.get('files/:path(.*)*', Page).name('files.show')
+    expect(Route.route('files.show')).toBe('/files')
+    expect(Route.route('files.show', { path: 'docs/readme' })).toBe('/files/docs/readme')
+  })
+})
+
+describe('empty required param values (audit: silent wrong URL)', () => {
+  it('throws a clear error instead of generating /users/edit', () => {
+    Route.get('users/{id}/edit', Page).name('users.edit')
+    expect(() => Route.route('users.edit', { id: '' })).toThrow(/must not be empty/)
+  })
+
+  it('still collapses an empty optional param', () => {
+    Route.get('docs/{slug?}', Page).name('docs')
+    expect(Route.route('docs', { slug: '' })).toBe('/docs')
   })
 })
 

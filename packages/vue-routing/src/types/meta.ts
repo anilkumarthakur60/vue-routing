@@ -1,4 +1,6 @@
-import type { MiddlewareFn, MissingHandler } from '@/lib/types/navigation'
+import type { MiddlewareFn, MissingHandler } from '@/types/navigation'
+import type { ParamValue } from '@/path'
+import type { ResourceAction } from '@/constants'
 
 /** Strongly-typed metadata attached to every route record this package creates. */
 export interface AppRouteMeta {
@@ -15,11 +17,11 @@ export interface AppRouteMeta {
   /** Custom binding columns by parameter, parsed from `{param:field}` segments. */
   bindingFields?: Record<string, string>
   /** Default parameter values used during URL generation (Laravel's `defaults()`). */
-  defaults?: Record<string, string | number | boolean>
+  defaults?: Record<string, ParamValue>
   /** Handler invoked when a bound model is missing. */
   missing?: MissingHandler
   /** The resourceful action name (`index`, `show`, …) when applicable. */
-  action?: string
+  action?: ResourceAction
   /** Subdomain pattern (e.g. `{account}.example.com`). */
   domain?: string
   /** HTTP status for redirect routes. */

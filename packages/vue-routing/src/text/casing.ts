@@ -15,10 +15,27 @@ export function splitWords(input: string): string[] {
 export function pluralize(word: string): string {
   if (/[^aeiou]y$/i.test(word)) return word.replace(/y$/i, 'ies')
   if (/(?:fe|f)$/i.test(word)) return word.replace(/(?:fe|f)$/i, 'ves')
+  // A final z after a short vowel doubles: quiz → quizzes, fez → fezzes.
+  if (/[aeiou]z$/i.test(word)) return `${word}zes`
   if (/(s|x|z|ch|sh)$/i.test(word)) return `${word}es`
   if (/[aeiou]o$/i.test(word)) return `${word}s`
   if (/o$/i.test(word)) return `${word}es`
   return `${word}s`
+}
+
+/**
+ * Plural → singular pairs the suffix rules in {@link singularize} cannot
+ * derive: `buses` is indistinguishable from `houses` by suffix (the bare `s$`
+ * rule would give `buse`), `ves` maps to both `fe` (`knives`) and `f`
+ * (`wolves`), and stripping `es` from `quizzes` leaves the doubled `z`.
+ */
+const IRREGULAR_SINGULARS: Record<string, string> = {
+  buses: 'bus',
+  gases: 'gas',
+  knives: 'knife',
+  lives: 'life',
+  wives: 'wife',
+  quizzes: 'quiz',
 }
 
 /**
@@ -28,6 +45,8 @@ export function pluralize(word: string): string {
  * `resource()` to override irregular cases.
  */
 export function singularize(word: string): string {
+  const irregular = IRREGULAR_SINGULARS[word.toLowerCase()]
+  if (irregular !== undefined) return irregular
   if (/ies$/i.test(word)) return word.replace(/ies$/i, 'y')
   if (/ves$/i.test(word)) return word.replace(/ves$/i, 'f')
   if (/(?:sses|shes|ches|xes|zes)$/i.test(word)) return word.replace(/es$/i, '')

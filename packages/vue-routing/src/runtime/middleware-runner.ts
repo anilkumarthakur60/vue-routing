@@ -6,7 +6,7 @@
  * pipeline sequentially. The first non-`true`/non-`undefined` result wins.
  */
 import type { NavigationGuardReturn, RouteLocationNormalized } from 'vue-router'
-import type { MiddlewareFn } from '@/lib/types'
+import type { MiddlewareFn } from '@/types'
 
 /** Gather the ordered, de-duplicated middleware chain for a navigation target. */
 export function collectMiddleware(to: RouteLocationNormalized): MiddlewareFn[] {

@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { splitWords, pluralize, singularize, appendRouteName } from '@/lib'
+import { splitWords, pluralize, singularize, appendRouteName } from '@anil-labs/vue-routing'
 
 describe('splitWords', () => {
   it('splits camelCase, PascalCase, kebab-case, and snake_case', () => {
@@ -44,6 +44,25 @@ describe('singularize', () => {
   it('leaves already-singular or invariant words alone', () => {
     expect(singularize('class')).toBe('class')
     expect(singularize('user')).toBe('user')
+  })
+})
+
+describe('pluralize/singularize round-trip (audit: singularize round-trip failures)', () => {
+  it('round-trips -es/-ves/irregular words in both directions', () => {
+    const pairs: readonly [string, string][] = [
+      ['bus', 'buses'],
+      ['gas', 'gases'],
+      ['knife', 'knives'],
+      ['life', 'lives'],
+      ['wife', 'wives'],
+      ['quiz', 'quizzes'],
+      ['hero', 'heroes'],
+      ['wolf', 'wolves'],
+    ]
+    for (const [singular, plural] of pairs) {
+      expect(pluralize(singular)).toBe(plural)
+      expect(singularize(plural)).toBe(singular)
+    }
   })
 })
 

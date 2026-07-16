@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { Component } from 'vue'
-import { Route, createAppRouter } from '@/lib'
-import type { MiddlewareFn } from '@/lib'
+import { Route, createAppRouter } from '@anil-labs/vue-routing'
+import type { MiddlewareFn } from '@anil-labs/vue-routing'
 
 const stub = (name: string): Component => ({ name, render: () => null })
 

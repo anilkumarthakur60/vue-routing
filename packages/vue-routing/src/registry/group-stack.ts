@@ -3,9 +3,9 @@
  * attributes) into a single {@link ResolvedContext}. The merge itself is a pure
  * function so it can be tested in isolation.
  */
-import type { GroupAttributes, ResolvedContext } from '@/lib/types'
-import { convertLaravelParams, joinPaths } from '@/lib/path'
-import { appendRouteName } from '@/lib/text'
+import type { GroupAttributes, ResolvedContext } from '@/types'
+import { convertLaravelParams, extractBindingFields, joinPaths } from '@/path'
+import { appendRouteName } from '@/text'
 
 /** Merge a list of group levels (outermost → innermost) into one context. */
 export function mergeContext(levels: readonly GroupAttributes[]): ResolvedContext {
@@ -16,6 +16,7 @@ export function mergeContext(levels: readonly GroupAttributes[]): ResolvedContex
     excludedMiddleware: [],
     where: {},
     domain: undefined,
+    bindingFields: {},
     layouts: [],
     scopeBindings: false,
     withoutScopedBindings: false,
@@ -23,7 +24,13 @@ export function mergeContext(levels: readonly GroupAttributes[]): ResolvedContex
   }
 
   for (const level of levels) {
-    if (level.prefix) context.prefix = joinPaths(context.prefix, convertLaravelParams(level.prefix))
+    if (level.prefix) {
+      // Capture `{param:field}` binding columns BEFORE the brace syntax is
+      // destroyed by the colon conversion — otherwise a custom key declared in
+      // a group prefix is silently lost.
+      Object.assign(context.bindingFields, extractBindingFields(level.prefix))
+      context.prefix = joinPaths(context.prefix, convertLaravelParams(level.prefix))
+    }
     if (level.namePrefix) context.namePrefix = appendRouteName(context.namePrefix, level.namePrefix)
     if (level.middleware?.length) context.middleware.push(...level.middleware)
     if (level.excludedMiddleware?.length)
@@ -46,9 +53,42 @@ export class GroupStack {
   public run(attributes: GroupAttributes, callback: () => void): void {
     this.levels.push(attributes)
     try {
-      callback()
+      // The stack pops synchronously, so an async callback would register
+      // everything after its first `await` OUTSIDE the group — silently
+      // dropping the prefix/middleware. Reject thenables loudly instead.
+      const invoke: () => unknown = callback
+      const result = invoke()
+      if (isThenable(result)) {
+        throw new Error(
+          'group() callbacks must be synchronous — routes registered after an ' +
+            'await would lose the group attributes. Await your imports before ' +
+            'calling group().',
+        )
+      }
     } finally {
       this.levels.pop()
+    }
+  }
+
+  /** A snapshot of the current stack (outermost → innermost). */
+  public snapshot(): readonly GroupAttributes[] {
+    return [...this.levels]
+  }
+
+  /**
+   * Run a callback with the stack temporarily replaced by `levels`, restoring
+   * the previous stack afterwards. Lets deferred registrations (pending
+   * resources) execute in the group context where they were declared.
+   */
+  public runScoped(levels: readonly GroupAttributes[], callback: () => void): void {
+    const saved = [...this.levels]
+    this.levels.length = 0
+    this.levels.push(...levels)
+    try {
+      callback()
+    } finally {
+      this.levels.length = 0
+      this.levels.push(...saved)
     }
   }
 
@@ -60,4 +100,12 @@ export class GroupStack {
   public clear(): void {
     this.levels.length = 0
   }
+}
+
+function isThenable(value: unknown): value is PromiseLike<unknown> {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as { then?: unknown }).then === 'function'
+  )
 }

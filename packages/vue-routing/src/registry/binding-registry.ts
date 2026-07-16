@@ -1,5 +1,5 @@
 /** Owns the explicit model-binding resolvers keyed by parameter name. */
-import type { BindingResolver } from '@/lib/types'
+import type { BindingResolver } from '@/types'
 
 export class BindingRegistry {
   private readonly resolvers = new Map<string, BindingResolver>()
@@ -8,8 +8,8 @@ export class BindingRegistry {
     this.resolvers.set(param, resolver)
   }
 
-  /** The underlying map, to hand to {@link createAppRouter}. */
-  public all(): Map<string, BindingResolver> {
+  /** Read-only view of the registered resolvers. */
+  public all(): ReadonlyMap<string, BindingResolver> {
     return this.resolvers
   }
 

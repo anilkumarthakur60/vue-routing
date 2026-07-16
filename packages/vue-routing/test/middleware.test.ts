@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { Component } from 'vue'
-import { Route, createAppRouter, collectMiddleware, runMiddleware } from '@/lib'
-import type { MiddlewareFn } from '@/lib'
+import { Route, createAppRouter, collectMiddleware, runMiddleware } from '@anil-labs/vue-routing'
+import type { MiddlewareFn } from '@anil-labs/vue-routing'
 
 const stub = (name: string): Component => ({ name, render: () => null })
 const Page = stub('Page')
@@ -57,6 +57,81 @@ describe('collectMiddleware', () => {
     const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
     await router.push('/home')
     expect(order).toEqual(['log', 'auth']) // log not run twice
+  })
+})
+
+describe('async middleware (audit test gap: async pipeline + throwing guards)', () => {
+  it('awaits async middleware in order and short-circuits on redirect', async () => {
+    const order: string[] = []
+    const first: MiddlewareFn = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      order.push('first')
+      return { name: 'login' }
+    }
+    const second: MiddlewareFn = () => {
+      order.push('second')
+      return true
+    }
+    Route.middleware(first, second).group(() => {
+      Route.view('secret', Page).name('secret')
+    })
+    Route.view('login', Page).name('login')
+    const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
+    await router.push('/secret')
+    expect(router.currentRoute.value.name).toBe('login')
+    expect(order).toEqual(['first']) // second never ran
+  })
+
+  it('fully awaits async middleware before binding resolution starts', async () => {
+    const order: string[] = []
+    const slow: MiddlewareFn = async () => {
+      await new Promise((resolve) => setTimeout(resolve, 0))
+      order.push('middleware')
+      return true
+    }
+    Route.middleware(slow).group(() => {
+      Route.get('users/{user}', Page).name('users.show')
+    })
+    Route.bind('user', () => {
+      order.push('binding')
+      return { id: 1 }
+    })
+    const router = createAppRouter({
+      routes: Route.getRoutes(),
+      historyMode: 'memory',
+      bindings: Route.getBindings(),
+    })
+    await router.push('/users/1')
+    expect(order).toEqual(['middleware', 'binding'])
+  })
+
+  it('propagates a throwing middleware as a navigation error', async () => {
+    const boom: MiddlewareFn = () => {
+      throw new Error('middleware exploded')
+    }
+    Route.view('home', Page).name('home')
+    Route.middleware(boom).group(() => {
+      Route.view('danger', Page).name('danger')
+    })
+    const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
+    await router.push('/home')
+    await expect(router.push('/danger')).rejects.toThrow('middleware exploded')
+    expect(router.currentRoute.value.name).toBe('home')
+  })
+})
+
+describe('middleware cancel-with-false (audit test gap: end-to-end cancel)', () => {
+  it('cancels navigation and keeps the current route', async () => {
+    const block: MiddlewareFn = () => false
+    Route.view('home', Page).name('home')
+    Route.middleware(block).group(() => {
+      Route.view('blocked', Page).name('blocked')
+    })
+    const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
+    await router.push('/home')
+    await router.push('/blocked').catch(() => undefined)
+    expect(router.currentRoute.value.name).toBe('home')
+    expect(router.currentRoute.value.path).toBe('/home')
   })
 })
 

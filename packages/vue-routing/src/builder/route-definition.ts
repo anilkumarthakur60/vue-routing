@@ -7,15 +7,11 @@
  * contract, never on the concrete registry.
  */
 import type { RouteMeta, RouteRecordRaw } from 'vue-router'
-import type {
-  MiddlewareFn,
-  MissingHandler,
-  RegisteredRoute,
-  RouteDefinitionHost,
-} from '@/lib/types'
-import type { PatternName } from '@/lib/constants'
-import { applyWhereConstraints, patternConstraints, type ParamValue } from '@/lib/path'
-import { appendRouteName } from '@/lib/text'
+import type { MiddlewareFn, MissingHandler, RegisteredRoute, RouteDefinitionHost } from '@/types'
+import type { PatternName } from '@/constants'
+import { applyWhereConstraints, patternConstraints, type ParamValue } from '@/path'
+import { appendRouteName } from '@/text'
+import { whereInPattern } from '@/builder/where-in'
 
 export class RouteDefinition {
   /** The underlying vue-router record this definition wraps. */
@@ -23,12 +19,18 @@ export class RouteDefinition {
   private readonly absolutePath: string
   private readonly namePrefix: string
   private readonly host: RouteDefinitionHost
+  /** The name currently registered for this route (tracked so renames clean up). */
+  private assignedName?: string
 
   constructor(registered: RegisteredRoute, host: RouteDefinitionHost) {
     this.record = registered.record
     this.absolutePath = registered.absolutePath
     this.namePrefix = registered.namePrefix
     this.host = host
+    // A record can arrive pre-named (the fallback's auto-registered
+    // 'NotFound') — track it so a later .name() removes the stale entry.
+    this.assignedName =
+      typeof registered.record.name === 'string' ? registered.record.name : undefined
   }
 
   /** Lazily-initialized, always-present meta object for this record. */
@@ -38,11 +40,18 @@ export class RouteDefinition {
 
   // ── Naming ──────────────────────────────────────────────────────────────────
 
-  /** Assign a name, prefixed by any enclosing group name. Names must be unique. */
+  /**
+   * Assign a name, prefixed by any enclosing group name. Names must be unique.
+   * Renaming unregisters the previous name so no stale alias survives — the
+   * registry and vue-router always agree on which name resolves this route.
+   */
   public name(value: string): this {
     const fullName = appendRouteName(this.namePrefix, value)
+    if (this.assignedName === fullName) return this
+    if (this.assignedName !== undefined) this.host.unregisterName(this.assignedName)
     this.record.name = fullName
     this.host.registerName(fullName, { record: this.record, absolutePath: this.absolutePath })
+    this.assignedName = fullName
     return this
   }
 
@@ -69,14 +78,23 @@ export class RouteDefinition {
 
   // ── Parameter constraints ───────────────────────────────────────────────────
 
-  /** Constrain route parameters with raw regular expressions. */
+  /**
+   * Constrain route parameters with raw regular expressions.
+   *
+   * Recompiles the routing path from the clean absolute path so re-constraining
+   * an already-constrained param is last-write-wins — the path and `meta.where`
+   * can never silently diverge. Inline regex written directly in the URI keeps
+   * precedence (the compiler never overwrites it).
+   */
   public where(constraints: Record<string, string>): this {
-    this.record.path = applyWhereConstraints(
-      this.record.path,
-      constraints,
-      this.host.globalPatterns,
-    )
-    this.meta.where = { ...(this.meta.where ?? {}), ...constraints }
+    const where = { ...(this.meta.where ?? {}), ...constraints }
+    this.meta.where = where
+    const constrained = applyWhereConstraints(this.absolutePath, where, this.host.globalPatterns)
+    // Layout children were stripped of their leading slash when placed in the
+    // tree — preserve whichever shape the record currently has.
+    this.record.path = this.record.path.startsWith('/')
+      ? constrained
+      : constrained.replace(/^\//, '')
     return this
   }
 
@@ -105,9 +123,9 @@ export class RouteDefinition {
     return this.applyPattern(params, 'ulid')
   }
 
-  /** Constrain a parameter to one of a fixed set of values. */
+  /** Constrain a parameter to one of a fixed set of literal values. */
   public whereIn(param: string, values: readonly string[]): this {
-    return this.where({ [param]: values.join('|') })
+    return this.where({ [param]: whereInPattern(values) })
   }
 
   // ── Model binding modifiers ────────────────────────────────────────────────

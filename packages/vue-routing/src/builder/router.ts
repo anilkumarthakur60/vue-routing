@@ -5,9 +5,14 @@
  * named-route URLs, inspection) live directly on the facade.
  */
 import type { RouteRecordRaw } from 'vue-router'
-import { RouterCore, type RouteListRow } from '@/lib/registry'
-import { RouteRegistrar } from '@/lib/builder/route-registrar'
-import type { RouteDefinition } from '@/lib/builder/route-definition'
+import { RouterCore, type RouteListRow } from '@/registry'
+import { RouteRegistrar } from '@/builder/route-registrar'
+import type { RouteDefinition } from '@/builder/route-definition'
+import type {
+  PendingResourceCollection,
+  PendingResourceRegistration,
+  PendingSingletonRegistration,
+} from '@/builder/pending-resource'
 import type {
   BindingResolver,
   GroupAttributes,
@@ -15,8 +20,9 @@ import type {
   MissingHandler,
   ResourceOptions,
   RouteComponent,
-} from '@/lib/types'
-import type { ParamValue } from '@/lib/path'
+  SingletonOptions,
+} from '@/types'
+import type { ParamValueInput } from '@/path'
 
 export class Router {
   private readonly core = new RouterCore()
@@ -143,33 +149,40 @@ export class Router {
     name: string,
     component: RouteComponent,
     options?: ResourceOptions,
-  ): RouteRegistrar {
+  ): PendingResourceRegistration {
     return this.root().resource(name, component, options)
   }
 
-  public resources(map: Record<string, RouteComponent>, options?: ResourceOptions): RouteRegistrar {
+  public resources(
+    map: Record<string, RouteComponent>,
+    options?: ResourceOptions,
+  ): PendingResourceCollection {
     return this.root().resources(map, options)
   }
 
   public singleton(
     name: string,
     component: RouteComponent,
-    options?: ResourceOptions,
-  ): RouteRegistrar {
+    options?: SingletonOptions,
+  ): PendingSingletonRegistration {
     return this.root().singleton(name, component, options)
   }
 
   // ── Global parameter patterns ────────────────────────────────────────────────
 
-  /** Define a global constraint applied to every matching parameter name. */
+  /**
+   * Define a global constraint applied to every matching parameter name.
+   * Applied lazily at `getRoutes()`/`toList()` time, so the pattern also
+   * constrains routes that were registered before it was defined.
+   */
   public pattern(param: string, regex: string): this {
-    this.core.globalPatterns[param] = regex
+    this.core.addPatterns({ [param]: regex })
     return this
   }
 
   /** Define multiple global constraints at once. */
   public patterns(map: Record<string, string>): this {
-    Object.assign(this.core.globalPatterns, map)
+    this.core.addPatterns(map)
     return this
   }
 
@@ -186,9 +199,13 @@ export class Router {
     return this.bind(param, resolver)
   }
 
-  /** The registered bindings, to pass into {@link createAppRouter}. */
+  /**
+   * The registered bindings, to pass into {@link createAppRouter}. Returns a
+   * snapshot copy — mutating it cannot corrupt the registry (and `flush()`
+   * cannot empty a map a consumer already holds).
+   */
   public getBindings(): Map<string, BindingResolver> {
-    return this.core.bindings
+    return new Map(this.core.bindings)
   }
 
   // ── Inspection / export ──────────────────────────────────────────────────────
@@ -199,7 +216,7 @@ export class Router {
   }
 
   /** Generate a URL for a named route, Laravel `route()`-style. */
-  public route(name: string, params?: Record<string, ParamValue>): string {
+  public route(name: string, params?: Record<string, ParamValueInput>): string {
     return this.core.url(name, params)
   }
 
@@ -225,5 +242,25 @@ export class Router {
   }
 }
 
+/**
+ * Create an isolated `Route` facade with its own registry state.
+ *
+ * Prefer this over the shared {@link Route} singleton whenever the module
+ * graph can be evaluated more than once against a cached copy of this library
+ * (Vite SSR dev, HMR boundaries, per-request SSR, cross-file tests) — build
+ * your routes inside an explicit function and call it per router creation.
+ *
+ * @example
+ * ```ts
+ * export function defineRoutes(Route = createRouteFacade()) {
+ *   Route.get('/', Home).name('home')
+ *   return Route
+ * }
+ * ```
+ */
+export function createRouteFacade(): Router {
+  return new Router()
+}
+
 /** The singleton facade — import and use like Laravel's `Route`. */
-export const Route = new Router()
+export const Route: Router = /* @__PURE__ */ new Router()

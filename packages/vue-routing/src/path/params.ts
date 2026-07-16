@@ -1,7 +1,12 @@
 /** Route-parameter parsing and Laravel→vue-router conversion. Pure functions. */
 
-/** Regex source matching a vue-router param: `:name`, `:name(regex)`, `:name?`. */
-export const PARAM_PATTERN = ':([A-Za-z0-9_]+)(\\([^)]*\\))?(\\??)'
+/**
+ * Regex source matching a vue-router param token: `:name`, an optional inline
+ * regex (`:name(\\d+)`), and an optional modifier — `?` (optional), `*`
+ * (zero-or-more repeatable, e.g. the `/:pathMatch(.*)*` fallback), `+`
+ * (one-or-more repeatable).
+ */
+export const PARAM_PATTERN = ':([A-Za-z0-9_]+)(\\([^)]*\\))?([?+*]?)'
 
 /**
  * Convert Laravel-style braces to vue-router colon params:
@@ -34,6 +39,7 @@ export function extractBindingFields(path: string): Record<string, string> {
 /** A vue-router param token parsed from a compiled path. */
 export interface ParamToken {
   name: string
+  /** True when the URL may omit the param (`?` or zero-or-more `*`). */
   optional: boolean
 }
 
@@ -42,7 +48,10 @@ export function extractParamNames(path: string): ParamToken[] {
   const tokens: ParamToken[] = []
   for (const match of path.matchAll(new RegExp(PARAM_PATTERN, 'g'))) {
     const name = match[1]
-    if (name !== undefined) tokens.push({ name, optional: match[3] === '?' })
+    const modifier = match[3]
+    if (name !== undefined) {
+      tokens.push({ name, optional: modifier === '?' || modifier === '*' })
+    }
   }
   return tokens
 }

@@ -1,4 +1,4 @@
-import { patterns, type PatternName } from '@/lib/constants'
+import { patterns, type PatternName } from '@/constants'
 
 /**
  * Build a `where`-style constraints map that applies one named built-in pattern

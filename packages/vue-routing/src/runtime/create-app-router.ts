@@ -7,11 +7,13 @@ import {
   createRouter,
   createWebHashHistory,
   createWebHistory,
+  type RouteRecordRaw,
   type Router,
   type RouterHistory,
 } from 'vue-router'
-import type { CreateAppRouterOptions } from '@/lib/types'
-import { createNavigationGuard } from '@/lib/runtime/navigation-guard'
+import type { CreateAppRouterOptions } from '@/types'
+import { createNavigationGuard } from '@/runtime/navigation-guard'
+import { domainToRegExp } from '@/path'
 
 const HISTORY_FACTORIES: Record<
   NonNullable<CreateAppRouterOptions['historyMode']>,
@@ -26,6 +28,13 @@ const HISTORY_FACTORIES: Record<
  * Create a vue-router instance with Laravel-style middleware, domain, and
  * model-binding handling baked into a single `beforeEach` guard.
  *
+ * Routes restricted with `domain()` are resolved against the effective
+ * hostname (`options.hostname`, falling back to `window.location.hostname`):
+ * records whose domain does not match are dropped before the router is
+ * created, so the same path registered under several domains matches the
+ * right record per host. SSR consumers should pass the request's `Host`
+ * header as `hostname` — without it, domain filtering/validation is skipped.
+ *
  * @example
  * ```ts
  * import { createAppRouter, Route } from '@anil-labs/vue-routing'
@@ -39,17 +48,41 @@ export function createAppRouter(options: CreateAppRouterOptions): Router {
     routes,
     historyMode = 'history',
     base = '/',
-    scrollBehavior = () => ({ left: 0, top: 0 }),
+    scrollBehavior = (_to, _from, savedPosition) => savedPosition ?? { left: 0, top: 0 },
     bindings,
+    hostname,
   } = options
+
+  const host = hostname ?? (typeof window !== 'undefined' ? window.location.hostname : undefined)
 
   const router = createRouter({
     history: HISTORY_FACTORIES[historyMode](base),
-    routes,
+    routes: host === undefined ? routes : filterByDomain(routes, host),
     scrollBehavior,
   })
 
-  router.beforeEach(createNavigationGuard(bindings))
+  router.beforeEach(createNavigationGuard(bindings, host))
 
   return router
+}
+
+/**
+ * Drop records whose `meta.domain` does not match the effective hostname.
+ * The hostname is fixed for a page load, so resolving domains at creation
+ * time is sound — and it is the only way vue-router (which matches on path
+ * alone) can serve the same path registered under two different domains.
+ */
+function filterByDomain(records: RouteRecordRaw[], hostname: string): RouteRecordRaw[] {
+  const kept: RouteRecordRaw[] = []
+  for (const record of records) {
+    const domain = record.meta?.domain
+    if (domain !== undefined && !domainToRegExp(domain).test(hostname)) continue
+    const children = (record as { children?: RouteRecordRaw[] }).children
+    if (children === undefined || children.length === 0) {
+      kept.push(record)
+    } else {
+      kept.push({ ...record, children: filterByDomain(children, hostname) })
+    }
+  }
+  return kept
 }

@@ -1,5 +1,5 @@
 import type { RouteRecordRaw } from 'vue-router'
-import type { NamedRouteEntry } from '@/lib/types/factory'
+import type { NamedRouteEntry } from '@/types/factory'
 
 /**
  * The result of registering a route in the {@link RouterCore}: the underlying
@@ -18,5 +18,8 @@ export interface RegisteredRoute {
 /** The capabilities a {@link RouteDefinition} needs from the registry. */
 export interface RouteDefinitionHost {
   registerName(name: string, entry: NamedRouteEntry): void
-  readonly globalPatterns: Record<string, string>
+  /** Remove a previously registered name (used when a route is renamed). */
+  unregisterName(name: string): void
+  /** Read-only view of the global parameter patterns. */
+  readonly globalPatterns: Readonly<Record<string, string>>
 }

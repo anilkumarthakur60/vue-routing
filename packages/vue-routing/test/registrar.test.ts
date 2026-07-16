@@ -1,8 +1,8 @@
-import { beforeEach, describe, expect, it } from 'vitest'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { Component } from 'vue'
 import type { RouteRecordRaw } from 'vue-router'
-import { Route } from '@/lib'
-import type { MiddlewareFn } from '@/lib'
+import { Route } from '@anil-labs/vue-routing'
+import type { MiddlewareFn } from '@anil-labs/vue-routing'
 
 /** Minimal stub component — never mounted, only inspected. */
 const stub = (name: string): Component => ({ name, render: () => null })
@@ -113,6 +113,18 @@ describe('layouts', () => {
     expect(leaf?.name).toBe('settings')
   })
 
+  it('reuses one wrapper across separate group() calls (audit test gap)', () => {
+    Route.layout(MainLayout).group(() => {
+      Route.view('a', Home).name('a')
+    })
+    Route.layout(MainLayout).group(() => {
+      Route.view('b', Home).name('b')
+    })
+    const routes = Route.getRoutes()
+    expect(routes).toHaveLength(1)
+    expect(childrenOf(routes[0]).map((child) => child.name)).toEqual(['a', 'b'])
+  })
+
   it('propagates group middleware onto the page record', () => {
     const auth: MiddlewareFn = () => true
     Route.middleware(auth)
@@ -171,6 +183,18 @@ describe('redirects and fallback', () => {
     expect(record?.name).toBe('NotFound')
     expect(record?.meta?.isFallback).toBe(true)
     expect(Route.has('NotFound')).toBe(true)
+  })
+
+  it('re-registering the global fallback warns instead of throwing (audit test gap)', () => {
+    // Same name + same path → the idempotent name registry replaces the entry
+    // with a dev warning (route-module re-evaluation), it must not throw.
+    const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined)
+    Route.fallback(NotFound)
+    expect(() => Route.fallback(NotFound)).not.toThrow()
+    expect(warn).toHaveBeenCalledTimes(1)
+    expect(Route.has('NotFound')).toBe(true)
+    expect(Route.route('NotFound')).toBe('/')
+    warn.mockRestore()
   })
 })
 

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest'
 import type { Component } from 'vue'
-import { Route, createAppRouter } from '@/lib'
+import { Route, createAppRouter } from '@anil-labs/vue-routing'
 
 const stub = (name: string): Component => ({ name, render: () => null })
 
@@ -47,6 +47,19 @@ describe('nested layout with nested routing', () => {
     // A non-settings route stays only two deep (MainLayout › page).
     await router.push('/dashboard')
     expect(router.currentRoute.value.matched).toHaveLength(2)
+  })
+
+  it("serves an '' index child at the layout root (audit test gap)", async () => {
+    const MainLayout = stub('MainLayout')
+    const HomePage = stub('HomePage')
+    Route.layout(MainLayout).group(() => {
+      Route.view('', HomePage).name('home')
+    })
+    const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
+    await router.push('/')
+    expect(router.currentRoute.value.name).toBe('home')
+    const chain = router.currentRoute.value.matched.map((record) => record.components?.['default'])
+    expect(chain).toEqual([MainLayout, HomePage])
   })
 
   it('keeps "/" redirecting even when MainLayout has a nested-layout index child', async () => {

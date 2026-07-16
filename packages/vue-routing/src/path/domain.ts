@@ -23,13 +23,15 @@ export function domainParamNames(domain: string): string[] {
 /**
  * Compile a domain pattern into an anchored `RegExp`. Literal characters
  * (notably the dots in `example.com`) are escaped; each `{param}` becomes a
- * single-label capture group (`[^.]+`).
+ * single-label capture group (`[^.]+`). Matching is case-insensitive — DNS
+ * hostnames are case-insensitive and `window.location.hostname` is always
+ * lowercase, so an uppercase letter in the pattern must not break matching.
  */
 export function domainToRegExp(domain: string): RegExp {
   // Escape first, which turns each `{param}` into `\{param\}`, then swap those
   // escaped tokens for capture groups.
   const source = escapeRegExp(domain).replace(/\\\{(\w+)\\\}/g, '([^.]+)')
-  return new RegExp(`^${source}$`)
+  return new RegExp(`^${source}$`, 'i')
 }
 
 /**

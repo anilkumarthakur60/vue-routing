@@ -5,14 +5,24 @@
  * in isolation.
  */
 import type { NavigationGuard, NavigationGuardReturn, RouteLocationNormalized } from 'vue-router'
-import type { BindingResolver, BindingResolverContext, MissingHandler } from '@/lib/types'
-import { collectMiddleware, runMiddleware } from '@/lib/runtime/middleware-runner'
-import { domainToRegExp } from '@/lib/path'
+import type { BindingResolver, BindingResolverContext, MissingHandler } from '@/types'
+import { collectMiddleware, runMiddleware } from '@/runtime/middleware-runner'
+import { domainToRegExp } from '@/path'
 
-/** Create the navigation guard, optionally resolving model bindings. */
-export function createNavigationGuard(bindings?: Map<string, BindingResolver>): NavigationGuard {
+/**
+ * Create the navigation guard, optionally resolving model bindings.
+ *
+ * `hostname` scopes domain validation: pass the request's `Host` header in
+ * SSR. Precedence is `hostname` → `window.location.hostname` → no domain
+ * validation (SSR without a hostname). `createAppRouter` also pre-filters
+ * records by domain at creation time, so this check is a safety net.
+ */
+export function createNavigationGuard(
+  bindings?: Map<string, BindingResolver>,
+  hostname?: string,
+): NavigationGuard {
   return async (to, from) => {
-    const domainResult = checkDomains(to)
+    const domainResult = checkDomains(to, hostname)
     if (domainResult !== undefined) return domainResult
 
     const middlewareResult = await runMiddleware(collectMiddleware(to), to, from)
@@ -26,13 +36,14 @@ export function createNavigationGuard(bindings?: Map<string, BindingResolver>): 
   }
 }
 
-/** Verify the current hostname satisfies every matched route's domain pattern. */
-function checkDomains(to: RouteLocationNormalized): NavigationGuardReturn {
-  if (typeof window === 'undefined') return undefined
+/** Verify the effective hostname satisfies every matched route's domain pattern. */
+function checkDomains(to: RouteLocationNormalized, hostname?: string): NavigationGuardReturn {
+  const host = hostname ?? (typeof window !== 'undefined' ? window.location.hostname : undefined)
+  if (host === undefined) return undefined
   for (const record of to.matched) {
     const domain = record.meta.domain
     if (!domain) continue
-    if (!domainToRegExp(domain).test(window.location.hostname)) {
+    if (!domainToRegExp(domain).test(host)) {
       return false
     }
   }

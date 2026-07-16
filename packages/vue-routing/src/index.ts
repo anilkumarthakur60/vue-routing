@@ -28,15 +28,19 @@
  */
 
 // Facade + fluent builder classes
-export { Route, Router, RouteRegistrar, RouteDefinition } from '@/lib/builder'
+export {
+  Route,
+  Router,
+  createRouteFacade,
+  RouteRegistrar,
+  RouteDefinition,
+  PendingResourceRegistration,
+  PendingSingletonRegistration,
+  PendingResourceCollection,
+} from '@/builder'
 
 // Router factory + runtime helpers
-export {
-  createAppRouter,
-  createNavigationGuard,
-  collectMiddleware,
-  runMiddleware,
-} from '@/lib/runtime'
+export { createAppRouter, createNavigationGuard, collectMiddleware, runMiddleware } from '@/runtime'
 
 // Composables
 export {
@@ -45,7 +49,7 @@ export {
   useIsRoute,
   useBoundModels,
   useSubdomainParams,
-} from '@/lib/composables'
+} from '@/composables'
 
 // Constants + their types
 export {
@@ -54,13 +58,13 @@ export {
   SINGLETON_ACTIONS,
   SINGLETON_ACTION_MAP,
   patterns,
-} from '@/lib/constants'
+} from '@/constants'
 export type {
   ResourceAction,
   ResourceActionConfig,
   SingletonAction,
   PatternName,
-} from '@/lib/constants'
+} from '@/constants'
 
 // Public types
 export type {
@@ -74,15 +78,17 @@ export type {
   GroupAttributes,
   ResolvedContext,
   ResourceOptions,
+  SingletonOptions,
   HistoryMode,
   CreateAppRouterOptions,
   NamedRouteEntry,
   RegisteredRoute,
   RouteDefinitionHost,
-} from '@/lib/types'
+} from '@/types'
+export type { RouteListRow } from '@/registry'
 
 // Tree-shakeable pure utilities
-export { splitWords, pluralize, singularize, appendRouteName } from '@/lib/text'
+export { splitWords, pluralize, singularize, appendRouteName } from '@/text'
 export {
   collapseSlashes,
   ensureLeadingSlash,
@@ -92,8 +98,8 @@ export {
   extractParamNames,
   compileUrl,
   applyWhereConstraints,
-} from '@/lib/path'
-export type { ParamValue, ParamToken } from '@/lib/path'
+} from '@/path'
+export type { ParamValue, ParamValueInput, ParamToken } from '@/path'
 
 // Default export — the singleton facade, like Laravel's `Route`.
-export { Route as default } from '@/lib/builder'
+export { Route as default } from '@/builder'

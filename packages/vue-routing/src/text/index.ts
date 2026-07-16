@@ -1,2 +1,2 @@
-export { appendRouteName } from '@/lib/text/naming'
-export { splitWords, pluralize, singularize } from '@/lib/text/casing'
+export { appendRouteName } from '@/text/naming'
+export { splitWords, pluralize, singularize } from '@/text/casing'

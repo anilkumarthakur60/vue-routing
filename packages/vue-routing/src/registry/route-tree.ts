@@ -4,8 +4,8 @@
  * so child access stays fully typed (no union narrowing on RouteRecordRaw).
  */
 import type { RouteRecordRaw } from 'vue-router'
-import type { MiddlewareFn, RouteComponent } from '@/lib/types'
-import { collapseSlashes, joinPaths } from '@/lib/path'
+import type { MiddlewareFn, RouteComponent } from '@/types'
+import { collapseSlashes, joinPaths } from '@/path'
 
 /** A layout wrapper node. */
 interface LayoutWrapper {
@@ -25,9 +25,13 @@ export class RouteTree {
   private readonly records: RouteRecordRaw[] = []
   private readonly wrappers = new WeakMap<RouteRecordRaw, LayoutWrapper>()
 
-  /** The top-level route records (what `createRouter` expects). */
+  /**
+   * The top-level route records (what `createRouter` expects). Returns a
+   * defensive copy so consumers holding the array are not affected by later
+   * registrations or `flush()` emptying the internal array in place.
+   */
   public roots(): RouteRecordRaw[] {
-    return this.records
+    return [...this.records]
   }
 
   /**
