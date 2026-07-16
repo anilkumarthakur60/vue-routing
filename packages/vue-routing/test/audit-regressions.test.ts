@@ -268,6 +268,12 @@ describe('whereIn regex escaping (values match literally)', () => {
     })
     expect(Route.getRoutes()[0]?.path).toBe('/dl/:ext(c\\+d|e\\|f)')
   })
+
+  it('rejects an empty whereIn() list instead of emitting a broken constraint', () => {
+    expect(() => Route.get('file/{ext}', Page).whereIn('ext', [])).toThrow(
+      /requires at least one value/,
+    )
+  })
 })
 
 describe('async group callback rejection (attributes must not silently pop early)', () => {
