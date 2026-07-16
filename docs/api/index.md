@@ -11,6 +11,24 @@ import { Route } from '@anil-labs/vue-routing'
 import Route from '@anil-labs/vue-routing' // same instance
 ```
 
+### `createRouteFacade()`
+
+Creates an **isolated** `Router` facade with its own registry state. Prefer it
+over the shared singleton whenever the module graph can be evaluated more than
+once against a cached copy of the library — Vite SSR dev, HMR boundaries,
+per-request SSR, cross-file tests:
+
+```ts
+import { createRouteFacade } from '@anil-labs/vue-routing'
+
+export function defineRoutes(Route = createRouteFacade()) {
+  Route.get('/', Home).name('home')
+  return Route
+}
+```
+
+See [Getting Started](/guide/getting-started#ssr-hmr-isolated-facades).
+
 ### Attribute builders
 
 Each returns a `RouteRegistrar` for chaining into `.group()` or a route
@@ -34,46 +52,75 @@ definition. See [Groups & Layouts](/guide/groups-and-layouts).
 
 ### Route definitions
 
-Each returns a `RouteDefinition` (except `resource`/`resources`/`singleton`,
-which return the registrar). See [Defining Routes](/guide/routing) and
-[Resources](/guide/resources).
+Each returns a `RouteDefinition`, except the resource methods, which return
+[pending registrations](#pendingresourceregistration). See
+[Defining Routes](/guide/routing) and [Resources](/guide/resources).
 
-| Method                              | Description                          |
-| ----------------------------------- | ------------------------------------ |
-| `get(uri, component)`               | A navigable route (`props: true`).   |
-| `view(uri, component, props?)`      | A route with optional static props.  |
-| `redirect(from, to, status = 302)`  | A redirect.                          |
-| `permanentRedirect(from, to)`       | A 301 redirect.                      |
-| `fallback(component)`               | The 404 route (named `NotFound`).    |
-| `resource(name, component, opts?)`  | index/create/show/edit routes.       |
-| `resources(map, opts?)`             | Register several resources at once.  |
-| `singleton(name, component, opts?)` | show/edit (+ create if `creatable`). |
+| Method                              | Description                                                                                          |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| `get(uri, component)`               | A navigable route (`props: true`).                                                                   |
+| `view(uri, component, props?)`      | A route with static props (merged over route params).                                                |
+| `redirect(from, to, status = 302)`  | A redirect; shared `{param}`s are substituted into the target.                                       |
+| `permanentRedirect(from, to)`       | A 301 redirect.                                                                                      |
+| `fallback(component)`               | The 404 route, scoped to the group prefix; named `NotFound`, group-name-prefixed (`admin.NotFound`). |
+| `resource(name, component, opts?)`  | index/create/show/edit routes → `PendingResourceRegistration`.                                       |
+| `resources(map, opts?)`             | Several resources at once → `PendingResourceCollection`.                                             |
+| `singleton(name, component, opts?)` | show/edit (+ create if creatable) → `PendingSingletonRegistration`.                                  |
 
 ### Group opener
 
 - `group(cb)` — open a group using the accumulated attributes.
-- `group(options, cb)` — merge extra [`GroupAttributes`](#types), then open.
+- `group(options, cb)` — merge extra [`GroupAttributes`](#types) attribute-wise
+  with the accumulated ones (middleware concatenates, prefixes append), then
+  open.
+
+Group callbacks must be **synchronous** — passing an `async` callback throws.
+See [Groups & Layouts](/guide/groups-and-layouts#group-callbacks-are-synchronous).
 
 ### Patterns & bindings
 
-| Method                   | Description                             |
-| ------------------------ | --------------------------------------- |
-| `pattern(name, regex)`   | Global constraint for a parameter name. |
-| `patterns(map)`          | Several global constraints.             |
-| `bind(param, resolver)`  | Explicit model-binding resolver.        |
-| `model(param, resolver)` | Alias of `bind`.                        |
-| `getBindings()`          | The bindings map for `createAppRouter`. |
+| Method                   | Description                                                                                  |
+| ------------------------ | -------------------------------------------------------------------------------------------- |
+| `pattern(name, regex)`   | Global constraint for a parameter name — applied lazily, so declaration order is irrelevant. |
+| `patterns(map)`          | Several global constraints.                                                                  |
+| `bind(param, resolver)`  | Explicit model-binding resolver.                                                             |
+| `model(param, resolver)` | Alias of `bind`.                                                                             |
+| `getBindings()`          | A snapshot of the bindings map for `createAppRouter`.                                        |
 
 ### Inspection & export
 
-| Method                 | Returns                                   |
-| ---------------------- | ----------------------------------------- |
-| `getRoutes()`          | `RouteRecordRaw[]` for `createAppRouter`. |
-| `route(name, params?)` | A generated URL string.                   |
-| `has(name)`            | Whether a named route exists.             |
-| `toList(filter?)`      | `{ path, name, middleware }[]`.           |
-| `list({ path? })`      | `console.table` of the routes.            |
-| `flush()`              | Reset all state (useful in tests).        |
+| Method                 | Returns                                                   |
+| ---------------------- | --------------------------------------------------------- |
+| `getRoutes()`          | `RouteRecordRaw[]` for `createAppRouter` (a fresh array). |
+| `route(name, params?)` | A generated URL string.                                   |
+| `has(name)`            | Whether a named route exists.                             |
+| `toList(filter?)`      | `RouteListRow[]` — `{ path, name, middleware }`.          |
+| `list({ path? })`      | `console.table` of the routes.                            |
+| `flush()`              | Reset all state (useful in tests).                        |
+
+## `PendingResourceRegistration`
+
+Returned by `resource()` (and, as subclasses, by `singleton()` and
+`resources()`). The routes register lazily, so methods chained immediately
+after the call genuinely apply — Laravel's `PendingResourceRegistration`.
+Pending routes commit automatically before the next registration or router
+query; chaining after commit throws. See
+[Resources → Fluent chaining](/guide/resources#fluent-chaining).
+
+| Method                                              | Description                          |
+| --------------------------------------------------- | ------------------------------------ |
+| `only(...actions)` / `except(...actions)`           | Restrict / exclude actions.          |
+| `names(base)`                                       | Override the route-name prefix.      |
+| `parameters(map)` / `parameter(segment, param)`     | Override route parameter names.      |
+| `middleware(...)` / `withoutMiddleware(...)`        | Middleware for every resource route. |
+| `where(map)` / `whereNumber` / … / `whereIn`        | Constraints on the resource params.  |
+| `missing(handler)`                                  | Missing-model handler.               |
+| `scopeBindings()` / `withoutScopedBindings()`       | Binding scoping.                     |
+| `creatable()` _(PendingSingletonRegistration only)_ | Also register `create`.              |
+
+`PendingResourceCollection` (from `resources()`) fans `only` / `except` /
+`parameters` / `middleware` / `withoutMiddleware` / `where` / `missing` out to
+every resource it holds.
 
 ## `RouteDefinition`
 
@@ -103,15 +150,25 @@ interface CreateAppRouterOptions {
   routes: RouteRecordRaw[]
   historyMode?: 'history' | 'hash' | 'memory' // default 'history'
   base?: string // e.g. import.meta.env.BASE_URL
-  scrollBehavior?: Router['options']['scrollBehavior'] // default: top-left
+  scrollBehavior?: Router['options']['scrollBehavior'] // default: saved position, else top-left
   bindings?: Map<string, BindingResolver> // from Route.getBindings()
+  hostname?: string // for domain() routes; SSR: the request's Host header
 }
 ```
+
+- **Domain filtering** — records whose `domain()` does not match the effective
+  hostname (`hostname` option → `window.location.hostname`) are dropped before
+  the router is created, so the same path registered under several domains
+  matches per host. Without a hostname (SSR without the option), filtering is
+  skipped. See [Subdomains](/guide/subdomains).
+- **Scroll behavior** — the default restores the saved position on
+  back/forward navigation and scrolls to top-left otherwise.
 
 The single `beforeEach` guard runs, in order:
 
 1. **Subdomain checks** — validates each matched route's `domain` against the
-   current hostname (cancels on mismatch).
+   effective hostname (cancels on mismatch; a safety net on top of the
+   creation-time filtering).
 2. **Middleware pipeline** — collects, de-duplicates, and runs middleware from
    all matched records; the first redirect/cancel result wins.
 3. **Model-binding resolution** — resolves bound params (parent → child) and
@@ -134,7 +191,9 @@ See [Composables](/guide/composables). All are reactive and must be called in
 
 Lower-level pieces, if you build your own guard:
 
-- `createNavigationGuard(bindings?)` — the `beforeEach` guard used by `createAppRouter`.
+- `createNavigationGuard(bindings?, hostname?)` — the `beforeEach` guard used by
+  `createAppRouter`; `hostname` scopes domain validation (pass the request's
+  `Host` header in SSR).
 - `collectMiddleware(to)` — the ordered, de-duplicated middleware chain for a target.
 - `runMiddleware(chain, to, from)` — run a chain; first redirect/cancel wins.
 
@@ -154,21 +213,29 @@ Exported type aliases and interfaces:
 
 `RouteComponent` · `MiddlewareFn` · `GuardResult` · `MissingHandler` ·
 `BindingResolver<T>` · `BindingResolverContext` · `AppRouteMeta` ·
-`GroupAttributes` · `ResolvedContext` · `ResourceOptions` · `HistoryMode` ·
-`CreateAppRouterOptions` · `NamedRouteEntry` · `RegisteredRoute` ·
-`RouteDefinitionHost` · `ResourceAction` · `ResourceActionConfig` ·
-`SingletonAction` · `PatternName` · `ParamValue` · `ParamToken`.
+`GroupAttributes` · `ResolvedContext` · `ResourceOptions` · `SingletonOptions` ·
+`HistoryMode` · `CreateAppRouterOptions` · `NamedRouteEntry` ·
+`RegisteredRoute` · `RouteDefinitionHost` · `RouteListRow` · `ResourceAction` ·
+`ResourceActionConfig` · `SingletonAction` · `PatternName` · `ParamValue` ·
+`ParamToken`.
 
-### `ResourceOptions`
+### `ResourceOptions` / `SingletonOptions`
+
+The action union is a type parameter, so `only` / `except` / `components` keys
+are checked against the real action names — a typo like `only: ['idnex']`
+fails to compile:
 
 ```ts
-interface ResourceOptions {
-  only?: readonly string[] // restrict to these actions
-  except?: readonly string[] // exclude these actions
-  components?: Partial<Record<string, RouteComponent>> // per-action component
+interface ResourceOptions<TAction extends string = ResourceAction> {
+  only?: readonly TAction[] // restrict to these actions
+  except?: readonly TAction[] // exclude these actions
+  components?: Partial<Record<TAction, RouteComponent>> // per-action component
   parameters?: Record<string, string> // override the param name per segment
   names?: string // override the route-name prefix
-  creatable?: boolean // singleton() only: also register `create`
+}
+
+interface SingletonOptions extends ResourceOptions<SingletonAction> {
+  creatable?: boolean // also register `create`
 }
 ```
 

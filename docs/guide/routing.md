@@ -32,6 +32,10 @@ Route.view('about', AboutPage, { version: '1.0.0' }).name('about')
 defineProps<{ version?: string }>() // inside AboutPage
 ```
 
+Static props are merged **over** the route params (static wins on a name
+clash), so a `view()` route with `{param}` segments still receives them as
+props.
+
 ## Redirects
 
 ```ts
@@ -46,6 +50,36 @@ A common pattern is redirecting the index of a section to its default child:
 Route.redirect('settings', '/settings/profile')
 ```
 
+### Parameters in redirects
+
+Params shared between the source and the target are substituted, like Laravel:
+
+```ts
+Route.redirect('old/{id}', '/new/{id}')
+// /old/42 → /new/42
+```
+
+Only params the target actually uses are forwarded — unshared source params
+never leak into the target's query string. A param in the target that the
+source cannot supply throws at navigation time.
+
+### Middleware & constraints on redirects
+
+Redirects respect the enclosing group's `where()` constraints and middleware:
+
+```ts
+Route.whereNumber('id').group(() => {
+  Route.redirect('old/{id}', '/new/{id}') // only matches numeric ids
+})
+
+Route.middleware(auth).group(() => {
+  Route.redirect('legacy', '/dashboard') // auth runs before the redirect
+})
+```
+
+When middleware applies, the middleware pipeline runs first; a middleware
+redirect or cancel wins over the declared target.
+
 ## Fallback (404)
 
 ```ts
@@ -54,6 +88,22 @@ Route.fallback(NotFoundPage)
 
 This matches `/:pathMatch(.*)*` and is registered under the name `NotFound`, so
 `Route.has('NotFound')` is `true` and you can navigate to it programmatically.
+
+### Scoped fallbacks
+
+Inside a group, the fallback inherits the group's prefix and name prefix
+(Laravel applies the group prefix to `Route::fallback` too), so a section can
+have its own 404 alongside the global one:
+
+```ts
+Route.prefix('admin')
+  .asPrefix('admin')
+  .group(() => {
+    Route.fallback(AdminNotFoundPage) // matches /admin/…, named "admin.NotFound"
+  })
+
+Route.fallback(NotFoundPage) // matches everything else, named "NotFound"
+```
 
 ## Route parameters
 
@@ -84,4 +134,6 @@ Route.list() // console.table(...) for quick debugging
 ```
 
 `Route.getRoutes()` returns the assembled `RouteRecordRaw[]` to hand to
-[`createAppRouter`](/api/#createapprouter-options).
+[`createAppRouter`](/api/#createapprouter-options). It returns a fresh array on
+each call — mutating it (or calling `Route.flush()`) cannot corrupt a copy you
+already handed to a router.
