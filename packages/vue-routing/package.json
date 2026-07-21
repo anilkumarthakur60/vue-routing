@@ -1,0 +1,74 @@
+{
+  "name": "@anil-labs/vue-routing",
+  "version": "0.1.1",
+  "type": "module",
+  "description": "Laravel-inspired, fully-typed declarative routing for Vue 3 — a fluent wrapper over vue-router.",
+  "keywords": [
+    "vue",
+    "vue-router",
+    "router",
+    "routing",
+    "laravel",
+    "typescript",
+    "middleware"
+  ],
+  "license": "MIT",
+  "author": "Anil Kumar Thakur (https://github.com/anilkumarthakur60)",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anilkumarthakur60/vue-routing.git",
+    "directory": "packages/vue-routing"
+  },
+  "homepage": "https://github.com/anilkumarthakur60/vue-routing#readme",
+  "bugs": {
+    "url": "https://github.com/anilkumarthakur60/vue-routing/issues"
+  },
+  "engines": {
+    "node": ">=20.19.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "sideEffects": false,
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      },
+      "require": {
+        "types": "./dist/index.d.cts",
+        "default": "./dist/index.cjs"
+      }
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "typecheck": "tsc --noEmit"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0",
+    "vue-router": "^4.5.0 || ^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "@vitest/coverage-v8": "^4.1.8",
+    "@vue/test-utils": "^2.4.10",
+    "happy-dom": "^20.10.1",
+    "tsup": "^8.5.1",
+    "typescript": "~6.0.3",
+    "vitest": "^4.1.8",
+    "vue": "^3.5.35",
+    "vue-router": "^5.1.0"
+  }
+}

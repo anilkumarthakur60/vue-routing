@@ -8,9 +8,19 @@ Route.middleware(auth)
   .group(() => {
     Route.redirect('', '/dashboard')
     Route.view('dashboard', () => import('@/pages/Dashboard.vue')).name('dashboard')
-    Route.resource('users', UsersPage, { only: ['index', 'show'] })
+    Route.resource('users', UsersPage).only('index', 'show')
   })
 ```
+
+## Repository structure
+
+This is a pnpm workspace monorepo:
+
+| Path                                             | What it is                                        |
+| ------------------------------------------------ | ------------------------------------------------- |
+| [`packages/vue-routing`](./packages/vue-routing) | The published library — `@anil-labs/vue-routing`. |
+| [`examples/demo`](./examples/demo)               | Interactive demo SPA exercising every feature.    |
+| [`docs`](./docs)                                 | The VitePress documentation site.                 |
 
 ## Install
 
@@ -18,7 +28,7 @@ Route.middleware(auth)
 npm i @anil-labs/vue-routing
 ```
 
-`vue` (^3.5) and `vue-router` (^4.5) are **peer dependencies** — provide them in your app.
+`vue` (^3.5) and `vue-router` (^4.5 or ^5) are **peer dependencies** — provide them in your app.
 
 ## Quick start
 
@@ -65,23 +75,50 @@ export default createAppRouter({
 > concerns. The only verb is `get` (plus `view`, `redirect`, `fallback`,
 > `resource`).
 
+## SSR: `createRouteFacade()`
+
+The shared `Route` singleton holds registration state at module scope — ideal
+for an SPA, wrong for anything that evaluates your routes module more than
+once against a cached copy of the library (Vite SSR dev, HMR boundaries,
+per-request SSR, cross-file tests). For those, create an **isolated facade**
+per router:
+
+```ts
+import { createRouteFacade, createAppRouter } from '@anil-labs/vue-routing'
+
+export function buildRouter(hostname?: string) {
+  const Route = createRouteFacade() // fresh registry, no shared state
+  Route.get('/', Home).name('home')
+
+  return createAppRouter({
+    routes: Route.getRoutes(),
+    historyMode: 'memory',
+    hostname, // pass the request's Host header — enables domain() routing in SSR
+  })
+}
+```
+
+The singleton is also forgiving now: re-registering the identical (name, path)
+pair replaces the entry with a dev-time warning instead of throwing, so an
+HMR-triggered re-evaluation survives.
+
 ## Features
 
-| Capability        | API                                                                                           |
-| ----------------- | --------------------------------------------------------------------------------------------- |
-| Routes            | `Route.get(uri, component)`, `Route.view(uri, component, props?)`                             |
-| Redirects         | `Route.redirect(from, to, status?)`, `Route.permanentRedirect(from, to)`                      |
-| Named routes      | `.name('x')` / `.as('x')`, plus group `name()`/`asPrefix()` prefixes                          |
-| Groups            | `Route.middleware(...).prefix(...).group(cb)`                                                 |
-| Layouts (nested)  | `Route.layout(Comp).group(cb)` — wraps routes in `<router-view>` parents                      |
-| Middleware        | per-route `.middleware(...)` / `.withoutMiddleware(...)`, group-level, auto-merged            |
-| Param constraints | `.where({...})`, `.whereNumber/whereAlpha/whereAlphaNumeric/whereUuid/whereUlid/whereIn(...)` |
-| Global patterns   | `Route.pattern(name, regex)` / `Route.patterns({...})`                                        |
-| Resources         | `Route.resource(name, comp, opts?)` → navigable `index`/`create`/`show`/`edit` only           |
-| Model bindings    | `Route.bind(param, resolver)` / `Route.model(...)` + `.missing(handler)`                      |
-| Subdomains        | `Route.domain('{account}.example.com').group(cb)`                                             |
-| URL generation    | `Route.route(name, params?)` → string                                                         |
-| Inspection        | `Route.has(name)`, `Route.toList()`, `Route.list()`                                           |
+| Capability        | API                                                                                                           |
+| ----------------- | ------------------------------------------------------------------------------------------------------------- |
+| Routes            | `Route.get(uri, component)`, `Route.view(uri, component, props?)`                                             |
+| Redirects         | `Route.redirect(from, to, status?)` (shared `{param}`s substituted), `Route.permanentRedirect`                |
+| Named routes      | `.name('x')` / `.as('x')`, plus group `name()`/`asPrefix()` prefixes                                          |
+| Groups            | `Route.middleware(...).prefix(...).group(cb)` — attributes merge, never replace                               |
+| Layouts (nested)  | `Route.layout(Comp).group(cb)` — wraps routes in `<router-view>` parents                                      |
+| Middleware        | per-route `.middleware(...)` / `.withoutMiddleware(...)`, group-level, auto-merged                            |
+| Param constraints | `.where({...})`, `.whereNumber/whereAlpha/whereAlphaNumeric/whereUuid/whereUlid/whereIn(...)`                 |
+| Global patterns   | `Route.pattern(name, regex)` / `Route.patterns({...})` — order-independent                                    |
+| Resources         | `Route.resource(name, comp)` → navigable `index`/`create`/`show`/`edit`, fluent `.only()`, `.middleware()`, … |
+| Model bindings    | `Route.bind(param, resolver)` / `Route.model(...)` + `.missing(handler)`                                      |
+| Subdomains        | `Route.domain('{account}.example.com').group(cb)` — per-host route matching                                   |
+| URL generation    | `Route.route(name, params?)` → string (domain params fill the host)                                           |
+| Inspection        | `Route.has(name)`, `Route.toList()`, `Route.list()`                                                           |
 
 ### Laravel-style parameters
 
@@ -133,84 +170,57 @@ handler).
 
 ## Demo
 
-A full interactive demo lives in [`demo/`](./demo) and exercises every feature —
-layouts, middleware (auth/guest/log), redirects, optional & constrained params,
-resources, model binding with `missing()`, URL generation, the route table, and 404. It imports the package by its published name.
+A full interactive demo lives in [`examples/demo/`](./examples/demo) and
+exercises every feature — layouts, middleware (auth/guest/log), redirects,
+optional & constrained params, resources, model binding with `missing()`, URL
+generation, the route table, and 404. It imports the package by its published
+name (aliased to the workspace source, so library changes hot-reload).
 
 ```bash
-npm run dev           # run the demo locally
-npm run build:demo    # build the demo SPA into demo-dist/
-npm run preview:demo  # preview the production build
+pnpm install
+pnpm dev                                # run the demo locally
+pnpm --filter example-demo build        # build the demo SPA
+pnpm --filter example-demo preview      # preview the production build
 ```
-
-### Deploy the demo to Vercel
-
-The repo includes [`vercel.json`](./vercel.json), which points Vercel at the demo
-build and adds the SPA fallback rewrite (required for vue-router history mode):
-
-```json
-{
-  "buildCommand": "npm run build:demo",
-  "outputDirectory": "demo-dist",
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-}
-```
-
-- **Dashboard:** import the repo at [vercel.com/new](https://vercel.com/new) — it
-  auto-detects `vercel.json`, so no manual settings are needed.
-- **CLI:** `npm i -g vercel && vercel` (then `vercel --prod`).
-
-> The default `npm run build` is the **library** build (for npm publishing). The
-> demo uses a separate config (`vite.demo.config.ts`), so the two never collide.
 
 ## Documentation
 
 Full docs are built with VitePress in [`docs/`](./docs):
 
 ```bash
-npm run docs:dev      # serve docs locally
-npm run docs:build    # build static docs
+pnpm docs:dev      # serve docs locally
+pnpm docs:build    # build static docs
+pnpm docs:preview  # preview the built docs
 ```
 
 ## Development
 
 ```bash
-npm run dev           # run the demo app (demo/)
-npm test              # vitest (tests/)
-npm run typecheck     # vue-tsc
-npm run build         # bundle + .d.ts into dist/
-npm run lint          # eslint
-npm run format        # prettier --write
-npm run format:check  # prettier --check
+pnpm install       # bootstrap the workspace
+pnpm dev           # run the demo app (examples/demo)
+pnpm test          # vitest across packages
+pnpm typecheck     # tsc/vue-tsc across the workspace
+pnpm build         # bundle + .d.ts for each package
+pnpm lint          # eslint
+pnpm format        # prettier --write
+pnpm check         # lint + format:check + typecheck + test
 ```
 
 ## Continuous integration & releases
 
 GitHub Actions workflows live in [`.github/workflows`](./.github/workflows):
 
-| Workflow                                                | Trigger                    | What it does                                                         |
-| ------------------------------------------------------- | -------------------------- | -------------------------------------------------------------------- |
-| **CI** (`ci.yml`)                                       | push to `main`, PRs        | lint, format check, typecheck, test, build lib + demo (Node 20 & 22) |
-| **Release** (`release.yml`)                             | a published GitHub Release | verify, build, `npm publish` (public, with provenance)               |
-| **Docs** (`docs.yml`)                                   | push to `main`             | build VitePress and deploy to GitHub Pages                           |
-| **Dependabot auto-merge** (`dependabot-auto-merge.yml`) | Dependabot PRs             | approve + auto-merge patch/minor bumps (majors stay manual)          |
+| Workflow                                                | Trigger                 | What it does                                                                                                                                          |
+| ------------------------------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **CI** (`ci.yml`)                                       | push to `main`, PRs     | install, build, lint, format check, typecheck, test, build examples                                                                                   |
+| **Release** (`release.yml`)                             | push to `main`          | [Changesets](https://github.com/changesets/changesets): opens/updates the "Version Packages" PR and publishes to npm (with provenance) when it merges |
+| **Docs** (`docs.yml`)                                   | push touching `docs/**` | build VitePress and deploy to GitHub Pages                                                                                                            |
+| **Dependabot auto-merge** (`dependabot-auto-merge.yml`) | Dependabot PRs          | approve + auto-merge patch/minor bumps (majors stay manual)                                                                                           |
 
-Dependencies are kept current by [`dependabot.yml`](./.github/dependabot.yml)
-(weekly npm + GitHub Actions updates, grouped by type).
-
-One-time setup:
-
-1. **Publishing** — add an npm token as the repo secret **`NPM_TOKEN`**
-   (Settings → Secrets and variables → Actions). To release: bump the version,
-   then publish a GitHub Release/tag — the workflow runs `npm publish`.
-   (`publishConfig` already sets `access: public` + provenance.)
-2. **Docs (GitHub Pages)** — Settings → Pages → Source: **GitHub Actions**. The
-   docs base path is set automatically to `/<repo>/` in CI.
-3. **Demo (Vercel)** — handled by Vercel's native Git integration via
-   [`vercel.json`](./vercel.json); no workflow or secret needed.
-4. **Auto-merge** — enable **Settings → General → Allow auto-merge**, and add a
-   branch-protection rule on `main` requiring the CI checks. Auto-merge then
-   waits for green CI before merging Dependabot's patch/minor PRs.
+To release: add a changeset (`pnpm changeset`) alongside your change; the
+Release workflow versions and publishes when the "Version Packages" PR merges.
+Publishing requires the **`NPM_TOKEN`** repo secret; GitHub Pages needs
+Settings → Pages → Source: **GitHub Actions** (one-time setup).
 
 ## License
 

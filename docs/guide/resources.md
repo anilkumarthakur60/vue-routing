@@ -27,6 +27,39 @@ work with resources — bind the `post` param and it resolves for `show` and `ed
 render, so they are intentionally not generated. Your component is the handler.
 :::
 
+## Fluent chaining
+
+`resource()` returns a **pending registration** (Laravel's
+`PendingResourceRegistration`): the routes are registered lazily, so methods
+chained right after the call genuinely apply:
+
+```ts
+Route.resource('posts', PostsPage).only('index', 'show').middleware(auth)
+
+Route.resource('users', UsersPage)
+  .except('create')
+  .whereNumber('user')
+  .names('members')
+  .parameter('users', 'member')
+  .missing(() => ({ name: 'users.index' }))
+```
+
+The pending routes are committed automatically — in declaration order — before
+the next route registration or any router query (`getRoutes()`, `route()`,
+`has()`, …). Chain immediately after `resource()`; chaining after the
+registration has been committed throws.
+
+Everything chainable is also available as an options object — the two forms
+are equivalent:
+
+```ts
+Route.resource('posts', PostsPage, { only: ['index', 'show'] })
+Route.resource('posts', PostsPage).only('index', 'show')
+```
+
+`only`/`except`/`components` keys are typed against the real action names, so
+a typo like `only: ['idnex']` fails to compile.
+
 ## Restricting actions
 
 ```ts
@@ -82,6 +115,13 @@ Route.resource('photos.comments', CommentsPage)
 Route.resources({ photos: PhotosPage, videos: VideosPage }, { only: ['index', 'show'] })
 ```
 
+`resources()` returns a collection whose chained calls fan out to every
+resource:
+
+```ts
+Route.resources({ photos: PhotosPage, videos: VideosPage }).only('index', 'show').middleware(auth)
+```
+
 ## Resources inside groups
 
 `resource()` composes with groups — prefixes and name prefixes merge:
@@ -107,10 +147,12 @@ Route.singleton('profile', ProfilePage)
 // profile.edit  /profile/edit
 ```
 
-Add the `create` action with `creatable`:
+Add the `create` action with `creatable` — as an option or chained (Laravel's
+`->creatable()`):
 
 ```ts
 Route.singleton('profile', ProfilePage, { creatable: true })
+Route.singleton('profile', ProfilePage).creatable()
 // profile.create /profile/create · profile.show /profile · profile.edit /profile/edit
 ```
 

@@ -1,10 +1,11 @@
 name: Docs
 
-# Builds the VitePress docs and deploys them to GitHub Pages.
-# Enable once: repo Settings → Pages → Source: "GitHub Actions".
 on:
   push:
     branches: [main]
+    paths:
+      - 'docs/**'
+      - '.github/workflows/docs.yml'
   workflow_dispatch:
 
 permissions:
@@ -19,43 +20,39 @@ concurrency:
 
 jobs:
   build:
-    name: Build docs
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
+      - uses: actions/checkout@v4
         with:
-          node-version: 22
-          cache: npm
+          fetch-depth: 0 # VitePress "last updated" reads git history
 
-      - name: Configure Pages
-        uses: actions/configure-pages@v5
+      - uses: pnpm/action-setup@v4
 
-      - name: Install dependencies
-        run: npm ci
+      - uses: actions/setup-node@v4
+        with:
+          node-version: lts/*
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
 
       - name: Build docs
-        run: npm run docs:build
+        run: pnpm docs:build
         env:
-          # Serve under /<repo>/ on a GitHub Pages project site.
-          DOCS_BASE: /${{ github.event.repository.name }}/
+          DOCS_BASE: /vue-routing/ # GitHub Pages project-site path
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
         with:
           path: docs/.vitepress/dist
 
   deploy:
-    name: Deploy to GitHub Pages
     needs: build
     runs-on: ubuntu-latest
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Deploy
-        id: deployment
+      - id: deployment
         uses: actions/deploy-pages@v4

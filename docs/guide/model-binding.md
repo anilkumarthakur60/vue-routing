@@ -74,6 +74,16 @@ Route.bind('post', (value, _to, { field }) => fetchPost({ [field!]: value }))
 // field === 'slug'
 ```
 
+Custom keys declared in a **group prefix** carry through to every route inside
+(the leaf URI wins if both declare a field for the same param):
+
+```ts
+Route.prefix('teams/{team:slug}').group(() => {
+  Route.get('dashboard', TeamDashboard).name('teams.dashboard')
+  // resolver for `team` receives field === 'slug'
+})
+```
+
 ## Scoped bindings
 
 For nested params, `scopeBindings()` resolves **parent → child** and hands the

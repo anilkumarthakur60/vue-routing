@@ -56,6 +56,37 @@ Accepted keys mirror the chainable methods: `prefix`, `namePrefix`, `middleware`
 `excludedMiddleware`, `where`, `domain`, `layout`, `scopeBindings`,
 `withoutScopedBindings`, `missing`.
 
+Combining chained attributes with an options object **merges attribute-wise**,
+exactly like nesting two groups (Laravel's `RouteGroup::merge`): middleware
+concatenates, prefixes and name prefixes are appended, `where` maps are
+spread-merged. The options object never replaces what you chained:
+
+```ts
+Route.middleware(auth)
+  .prefix('admin')
+  .group({ prefix: 'reports', middleware: [log] }, () => {
+    Route.get('daily', DailyPage).name('daily')
+    // → /admin/reports/daily, middleware: [auth, log]
+  })
+```
+
+### Group callbacks are synchronous
+
+The group's attributes apply only while its callback runs, so an `async`
+callback would register everything after its first `await` **outside** the
+group. Passing one throws. Await your imports first, then group:
+
+```ts
+const AdminPage = await import('@/pages/Admin.vue') // ✓ before the group
+
+Route.prefix('admin').group(() => {
+  Route.view('', AdminPage).name('admin')
+})
+```
+
+Lazy loaders (`() => import('…')`) are unaffected — they are values, not
+awaited registrations.
+
 ### Available group attributes
 
 | Method                       | Effect                                                                                      |

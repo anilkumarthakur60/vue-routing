@@ -10,8 +10,8 @@
 npm i @anil-labs/vue-routing
 ```
 
-`vue` (^3.5) and `vue-router` (^4.5) are **peer dependencies** — your app
-provides them.
+`vue` (^3.5) and `vue-router` (^4.5 or ^5) are **peer dependencies** — your
+app provides them.
 
 ## A client-side router
 
@@ -72,11 +72,40 @@ import router from './router'
 createApp(App).use(router).mount('#app')
 ```
 
+## SSR, HMR & isolated facades
+
+The shared `Route` singleton is perfect for an SPA. When the module graph can
+be evaluated more than once against a cached copy of the library — Vite SSR
+dev, HMR boundaries, per-request SSR, tests importing the same routes file —
+create an **isolated facade** with `createRouteFacade()` and build your routes
+inside an explicit function:
+
+```ts
+import { createRouteFacade, createAppRouter } from '@anil-labs/vue-routing'
+
+export function buildRouter(hostname?: string) {
+  const Route = createRouteFacade() // fresh registry, no shared state
+  Route.get('/', Home).name('home')
+
+  return createAppRouter({
+    routes: Route.getRoutes(),
+    historyMode: 'memory',
+    hostname, // the request's Host header — enables domain() matching in SSR
+  })
+}
+```
+
+Re-registering the **identical** (name, path) pair on the singleton no longer
+throws either — it replaces the entry with a dev-time warning, so an
+HMR-triggered re-evaluation of a routes module is survivable. A true collision
+(same name, different path) still throws.
+
 ## Try the demo
 
-The repository ships a full interactive demo under `demo/` that exercises every
-feature. Run it with:
+The repository ships a full interactive demo under `examples/demo/` that
+exercises every feature. From the repo root:
 
 ```bash
-npm run dev
+pnpm install
+pnpm dev
 ```

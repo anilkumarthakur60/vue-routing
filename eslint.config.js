@@ -12,11 +12,10 @@ export default defineConfigWithVueTs(
     name: 'app/files-to-ignore',
     ignores: [
       '**/dist/**',
-      '**/demo-dist/**',
       '**/coverage/**',
       '**/node_modules/**',
       '**/docs/**',
-      '**/scripts/**',
+      '**/.changeset/**',
       '**/*.config.ts',
       'eslint.config.js',
     ],
@@ -51,8 +50,8 @@ export default defineConfigWithVueTs(
   // project service can't fully type). Lint it without type information to
   // avoid untyped-`.vue`-import noise — `no-explicit-any` still applies.
   {
-    name: 'app/demo-untyped',
-    files: ['demo/**/*.{ts,vue}'],
+    name: 'app/examples-untyped',
+    files: ['examples/**/*.{ts,vue}'],
     extends: [tseslint.configs.disableTypeChecked],
     rules: {
       '@typescript-eslint/no-explicit-any': 'error',
