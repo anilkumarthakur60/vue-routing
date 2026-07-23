@@ -19,6 +19,7 @@ import { findUser } from '../data/users'
 import { findArticle } from '../data/articles'
 
 // Pages
+import LandingPage from '../pages/LandingPage.vue'
 import LoginPage from '../pages/LoginPage.vue'
 import DashboardPage from '../pages/DashboardPage.vue'
 import AboutPage from '../pages/AboutPage.vue'
@@ -51,11 +52,13 @@ Route.bind('user', (value) => findUser(value))
 // and the resolved parent author as `ctx.parent`.
 Route.bind('article', (value, _to, ctx) => findArticle(value, ctx.parent))
 
-// ── Root redirect ───────────────────────────────────────────────────────────
-// Must be top-level: the guest and protected layouts both occupy '/', so the
-// bare '/' needs an explicit redirect (otherwise the first layout matches with
-// no child and renders blank).
-Route.redirect('/', '/dashboard')
+// ── Public landing at '/' ────────────────────────────────────────────────────
+// A marketing home page that sits OUTSIDE the auth/guest layout groups (like the
+// public 403 route below) and leads into the live feature tour. This replaces
+// the old bare '/' → /dashboard redirect: a top-level view route matches '/'
+// exactly, so it never hits the "layout matches with no child" blank-render
+// problem the redirect was working around.
+Route.view('/', LandingPage).name('landing')
 
 // ── Public area (guest-only) wrapped in AuthLayout ──────────────────────────
 Route.middleware(log, guest)

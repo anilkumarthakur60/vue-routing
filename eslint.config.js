@@ -12,10 +12,12 @@ export default defineConfigWithVueTs(
     name: 'app/files-to-ignore',
     ignores: [
       '**/dist/**',
+      '**/demo-dist/**',
       '**/coverage/**',
       '**/node_modules/**',
       '**/docs/**',
       '**/.changeset/**',
+      '**/scripts/**',
       '**/*.config.ts',
       'eslint.config.js',
     ],

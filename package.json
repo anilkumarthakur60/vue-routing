@@ -16,7 +16,7 @@
     "format:check": "prettier --check .",
     "check": "pnpm run lint && pnpm run format:check && pnpm run typecheck && pnpm run test",
     "example:demo": "pnpm --filter example-demo dev",
-    "build:demo": "pnpm --filter example-demo exec vite build --outDir=../../demo-dist --emptyOutDir",
+    "build:demo": "pnpm --filter example-demo exec vite build --outDir=../../demo-dist --emptyOutDir && node examples/demo/scripts/check-page.mjs",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "pnpm build && changeset publish",
