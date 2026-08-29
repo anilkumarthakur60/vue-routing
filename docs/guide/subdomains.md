@@ -18,8 +18,8 @@ is matched literally (dots are escaped, so `admin.example.com` does not match
 ## How it is enforced
 
 Domains are resolved at **router-creation time**. [`createAppRouter`](/api/#createapprouter-options)
-compares each record's `domain` against the effective hostname — the
-`hostname` option if given, else `window.location.hostname` — and drops the
+compares each record's `domain` against the effective hostname  the
+`hostname` option if given, else `window.location.hostname`  and drops the
 records that don't match before handing the tree to vue-router. The hostname
 is fixed for a page load, so each host sees exactly its own routes.
 
@@ -29,7 +29,7 @@ is fixed for a page load, so each host sees exactly its own routes.
 ```
 
 Because filtering happens per host, the **same path registered under two
-domains** works — Laravel's canonical multi-tenant pattern:
+domains** works  Laravel's canonical multi-tenant pattern:
 
 ```ts
 Route.domain('app.example.com').group(() => {
@@ -42,12 +42,12 @@ Route.domain('admin.example.com').group(() => {
 ```
 
 The navigation guard still validates `meta.domain` on every matched route as a
-safety net (navigation is cancelled on a mismatch — relevant if you build the
+safety net (navigation is cancelled on a mismatch  relevant if you build the
 router yourself with unfiltered records).
 
 ## SSR
 
-There is no `window` on the server — pass the incoming request's `Host` header
+There is no `window` on the server  pass the incoming request's `Host` header
 as `hostname` so domain filtering and validation work per request:
 
 ```ts
@@ -86,5 +86,5 @@ without a `window`.
 ## Generating URLs across domains
 
 `Route.route()` fills domain params into the **host** and returns a
-protocol-relative URL when it can — see
+protocol-relative URL when it can  see
 [URLs for domain-bound routes](/guide/url-generation#urls-for-domain-bound-routes).

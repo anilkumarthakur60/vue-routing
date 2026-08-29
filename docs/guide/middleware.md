@@ -1,7 +1,7 @@
 # Middleware
 
 Middleware are functions that run before a route is entered. They use
-vue-router's return-value style — **no `next()` callback**.
+vue-router's return-value style  **no `next()` callback**.
 
 ## Writing middleware
 
@@ -75,7 +75,7 @@ At **navigation**, the single `beforeEach` guard built by `createAppRouter`:
 
 1. collects middleware from every matched record, in order;
 2. removes anything excluded via `withoutMiddleware()`;
-3. de-duplicates — a middleware applied at both the group and route level runs
+3. de-duplicates  a middleware applied at both the group and route level runs
    once;
-4. runs them sequentially — the **first** non-`true`/non-`undefined` result wins
+4. runs them sequentially  the **first** non-`true`/non-`undefined` result wins
    (a redirect or cancel short-circuits the rest).

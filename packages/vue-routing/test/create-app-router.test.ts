@@ -15,7 +15,7 @@ beforeEach(() => {
   Route.flush()
 })
 
-describe('createAppRouter — configuration', () => {
+describe('createAppRouter  configuration', () => {
   it('builds a working router in memory history mode', () => {
     Route.view('home', Home).name('home')
     const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
@@ -46,7 +46,7 @@ describe('createAppRouter — configuration', () => {
   })
 })
 
-describe('createAppRouter — middleware pipeline', () => {
+describe('createAppRouter  middleware pipeline', () => {
   it('runs middleware for matched routes', async () => {
     const visited: string[] = []
     const tracker: MiddlewareFn = (to) => {
@@ -78,7 +78,7 @@ describe('createAppRouter — middleware pipeline', () => {
   })
 })
 
-describe('createAppRouter — model bindings', () => {
+describe('createAppRouter  model bindings', () => {
   it('resolves a bound model into meta.bound', async () => {
     Route.get('users/{id}', UserPage).name('users.show')
     Route.bind('id', (value) => (value === '1' ? { id: 1, name: 'Ada' } : null))

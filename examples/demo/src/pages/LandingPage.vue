@@ -35,7 +35,7 @@ Route.get('docs/{slug?}', DocPage).name('docs')`,
   },
   {
     title: 'Resource routing',
-    desc: 'One line registers index / create / show / edit — nested and bulk forms included.',
+    desc: 'One line registers index / create / show / edit  nested and bulk forms included.',
     code: `Route.resource('posts', PostsPage)
 Route.resources({ tags, labels }, { only: ['index', 'show'] })`,
   },
@@ -47,13 +47,13 @@ Route.resources({ tags, labels }, { only: ['index', 'show'] })`,
   },
   {
     title: 'Param constraints',
-    desc: 'Constrain params by number, UUID, enum or your own pattern — globally or per route.',
+    desc: 'Constrain params by number, UUID, enum or your own pattern  globally or per route.',
     code: `Route.get('orders/{order}').whereNumber('order')
 Route.get('plans/{plan}').whereIn('plan', ['free', 'pro'])`,
   },
   {
     title: 'Nested layouts',
-    desc: 'Compose layouts — a settings shell rendering inside the app shell — with real nesting.',
+    desc: 'Compose layouts  a settings shell rendering inside the app shell  with real nesting.',
     code: `Route.layout(SettingsLayout)
   .prefix('settings')
   .group(() => { /* profile, security … */ })`,
@@ -85,8 +85,8 @@ Route.get('plans/{plan}').whereIn('plan', ['free', 'pro'])`,
             <p class="lp-eyebrow">Laravel-inspired · Vue 3 · TypeScript</p>
             <h1>Routing that reads<br />like Laravel.</h1>
             <p class="lp-lead">
-              Define your Vue routes with a fluent, declarative API — middleware, groups, nested
-              layouts, resourceful routes, model binding and typed constraints — then hand a plain
+              Define your Vue routes with a fluent, declarative API  middleware, groups, nested
+              layouts, resourceful routes, model binding and typed constraints  then hand a plain
               vue-router instance to your app.
             </p>
             <div class="lp-cta">
@@ -116,7 +116,7 @@ Route.get('plans/{plan}').whereIn('plan', ['free', 'pro'])`,
         <div class="lp-shell">
           <div class="lp-section-head">
             <h2>Every routing pattern, declared</h2>
-            <p>Each of these is live in the demo — click through after you've read the shape.</p>
+            <p>Each of these is live in the demo  click through after you've read the shape.</p>
           </div>
           <div class="lp-grid">
             <article v-for="f in features" :key="f.title" class="lp-feature">

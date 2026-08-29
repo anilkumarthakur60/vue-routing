@@ -15,7 +15,7 @@ import Route from '@anil-labs/vue-routing' // same instance
 
 Creates an **isolated** `Router` facade with its own registry state. Prefer it
 over the shared singleton whenever the module graph can be evaluated more than
-once against a cached copy of the library — Vite SSR dev, HMR boundaries,
+once against a cached copy of the library  Vite SSR dev, HMR boundaries,
 per-request SSR, cross-file tests:
 
 ```ts
@@ -69,19 +69,19 @@ Each returns a `RouteDefinition`, except the resource methods, which return
 
 ### Group opener
 
-- `group(cb)` — open a group using the accumulated attributes.
-- `group(options, cb)` — merge extra [`GroupAttributes`](#types) attribute-wise
+- `group(cb)`  open a group using the accumulated attributes.
+- `group(options, cb)`  merge extra [`GroupAttributes`](#types) attribute-wise
   with the accumulated ones (middleware concatenates, prefixes append), then
   open.
 
-Group callbacks must be **synchronous** — passing an `async` callback throws.
+Group callbacks must be **synchronous**  passing an `async` callback throws.
 See [Groups & Layouts](/guide/groups-and-layouts#group-callbacks-are-synchronous).
 
 ### Patterns & bindings
 
 | Method                   | Description                                                                                  |
 | ------------------------ | -------------------------------------------------------------------------------------------- |
-| `pattern(name, regex)`   | Global constraint for a parameter name — applied lazily, so declaration order is irrelevant. |
+| `pattern(name, regex)`   | Global constraint for a parameter name  applied lazily, so declaration order is irrelevant. |
 | `patterns(map)`          | Several global constraints.                                                                  |
 | `bind(param, resolver)`  | Explicit model-binding resolver.                                                             |
 | `model(param, resolver)` | Alias of `bind`.                                                                             |
@@ -94,7 +94,7 @@ See [Groups & Layouts](/guide/groups-and-layouts#group-callbacks-are-synchronous
 | `getRoutes()`          | `RouteRecordRaw[]` for `createAppRouter` (a fresh array). |
 | `route(name, params?)` | A generated URL string.                                   |
 | `has(name)`            | Whether a named route exists.                             |
-| `toList(filter?)`      | `RouteListRow[]` — `{ path, name, middleware }`.          |
+| `toList(filter?)`      | `RouteListRow[]`  `{ path, name, middleware }`.          |
 | `list({ path? })`      | `console.table` of the routes.                            |
 | `flush()`              | Reset all state (useful in tests).                        |
 
@@ -102,7 +102,7 @@ See [Groups & Layouts](/guide/groups-and-layouts#group-callbacks-are-synchronous
 
 Returned by `resource()` (and, as subclasses, by `singleton()` and
 `resources()`). The routes register lazily, so methods chained immediately
-after the call genuinely apply — Laravel's `PendingResourceRegistration`.
+after the call genuinely apply  Laravel's `PendingResourceRegistration`.
 Pending routes commit automatically before the next registration or router
 query; chaining after commit throws. See
 [Resources → Fluent chaining](/guide/resources#fluent-chaining).
@@ -156,22 +156,22 @@ interface CreateAppRouterOptions {
 }
 ```
 
-- **Domain filtering** — records whose `domain()` does not match the effective
+- **Domain filtering**  records whose `domain()` does not match the effective
   hostname (`hostname` option → `window.location.hostname`) are dropped before
   the router is created, so the same path registered under several domains
   matches per host. Without a hostname (SSR without the option), filtering is
   skipped. See [Subdomains](/guide/subdomains).
-- **Scroll behavior** — the default restores the saved position on
+- **Scroll behavior**  the default restores the saved position on
   back/forward navigation and scrolls to top-left otherwise.
 
 The single `beforeEach` guard runs, in order:
 
-1. **Subdomain checks** — validates each matched route's `domain` against the
+1. **Subdomain checks**  validates each matched route's `domain` against the
    effective hostname (cancels on mismatch; a safety net on top of the
    creation-time filtering).
-2. **Middleware pipeline** — collects, de-duplicates, and runs middleware from
+2. **Middleware pipeline**  collects, de-duplicates, and runs middleware from
    all matched records; the first redirect/cancel result wins.
-3. **Model-binding resolution** — resolves bound params (parent → child) and
+3. **Model-binding resolution**  resolves bound params (parent → child) and
    attaches results to `to.meta.bound`, running `missing()` on failure.
 
 ## Composables
@@ -191,11 +191,11 @@ See [Composables](/guide/composables). All are reactive and must be called in
 
 Lower-level pieces, if you build your own guard:
 
-- `createNavigationGuard(bindings?, hostname?)` — the `beforeEach` guard used by
+- `createNavigationGuard(bindings?, hostname?)`  the `beforeEach` guard used by
   `createAppRouter`; `hostname` scopes domain validation (pass the request's
   `Host` header in SSR).
-- `collectMiddleware(to)` — the ordered, de-duplicated middleware chain for a target.
-- `runMiddleware(chain, to, from)` — run a chain; first redirect/cancel wins.
+- `collectMiddleware(to)`  the ordered, de-duplicated middleware chain for a target.
+- `runMiddleware(chain, to, from)`  run a chain; first redirect/cancel wins.
 
 ## Constants
 
@@ -222,7 +222,7 @@ Exported type aliases and interfaces:
 ### `ResourceOptions` / `SingletonOptions`
 
 The action union is a type parameter, so `only` / `except` / `components` keys
-are checked against the real action names — a typo like `only: ['idnex']`
+are checked against the real action names  a typo like `only: ['idnex']`
 fails to compile:
 
 ```ts

@@ -20,10 +20,10 @@ const examples: Example[] = [
 
 <template>
   <h1>Dashboard</h1>
-  <p class="muted">You're authenticated — the <code>auth</code> middleware allowed this route.</p>
+  <p class="muted">You're authenticated  the <code>auth</code> middleware allowed this route.</p>
 
   <div class="card">
-    <h2>URL generation — <code>Route.route(name, params)</code></h2>
+    <h2>URL generation  <code>Route.route(name, params)</code></h2>
     <table>
       <thead>
         <tr>

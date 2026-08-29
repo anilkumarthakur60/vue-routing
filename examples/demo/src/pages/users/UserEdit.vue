@@ -13,7 +13,7 @@ const models = useBoundModels<{ user: User }>()
       Editing <b>{{ models.user.name }}</b
       >, bound from <code>users/{user}/edit</code>.
     </p>
-    <p class="muted">Saving would POST to your API — outside this client router's scope.</p>
+    <p class="muted">Saving would POST to your API  outside this client router's scope.</p>
     <router-link :to="{ name: 'users.index' }">Back</router-link>
   </div>
 </template>

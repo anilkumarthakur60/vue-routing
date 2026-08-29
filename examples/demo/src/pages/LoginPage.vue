@@ -16,7 +16,7 @@ function onLogin(): void {
 <template>
   <h1>Sign in</h1>
   <p class="muted">
-    No real auth here — click to authenticate. The <code>guest</code> middleware sent you here; the
+    No real auth here  click to authenticate. The <code>guest</code> middleware sent you here; the
     <code>auth</code> middleware lets you back to the page you wanted.
   </p>
   <button class="btn btn-primary" style="width: 100%; margin-top: 12px" @click="onLogin">

@@ -16,7 +16,7 @@ export default defineConfig({
     include: ['test/**/*.test.ts'],
     coverage: {
       provider: 'v8',
-      // Measure the shipped library only — not barrels, tests, or config.
+      // Measure the shipped library only  not barrels, tests, or config.
       include: ['src/**/*.ts'],
       exclude: ['src/**/index.ts', 'src/types/**'],
       reporter: ['text', 'html'],

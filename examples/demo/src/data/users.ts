@@ -1,4 +1,4 @@
-/** Fake user "database" — backs the resource + model-binding demos. */
+/** Fake user "database"  backs the resource + model-binding demos. */
 export interface User {
   id: number
   name: string

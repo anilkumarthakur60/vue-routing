@@ -3,7 +3,7 @@
  * (group stack, route tree, name registry, binding registry, global patterns)
  * and exposes route-registration methods.
  *
- * Crucially, it returns plain {@link RegisteredRoute} values — it does NOT know
+ * Crucially, it returns plain {@link RegisteredRoute} values  it does NOT know
  * about the fluent {@link RouteDefinition}. That keeps the registry layer free
  * of any dependency on the builder layer.
  */
@@ -97,7 +97,7 @@ export class RouterCore implements RouteDefinitionHost {
     this.flushPendingRegistrations()
     const context = this.groups.resolve(transient)
     // Global patterns are applied lazily (see getRoutes/describe) so patterns
-    // declared after a route still constrain it — only `where` bakes here.
+    // declared after a route still constrain it  only `where` bakes here.
     const built = buildRouteRecord(context, uri, component, {}, action)
     return this.place(built, context.namePrefix, context.layouts)
   }
@@ -111,7 +111,7 @@ export class RouterCore implements RouteDefinitionHost {
     const registered = this.registerRoute(transient, uri, component)
     registered.record.meta = { ...registered.record.meta, isView: true }
     if (props) {
-      // Merge route params with the static props (static wins on conflict) —
+      // Merge route params with the static props (static wins on conflict) 
       // passing static props must not silently stop `{param}` segments from
       // reaching the component as props.
       ;(registered.record as { props?: unknown }).props = (route: {

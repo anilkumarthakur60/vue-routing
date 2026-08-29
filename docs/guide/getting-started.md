@@ -10,14 +10,14 @@
 npm i @anil-labs/vue-routing
 ```
 
-`vue` (^3.5) and `vue-router` (^4.5 or ^5) are **peer dependencies** — your
+`vue` (^3.5) and `vue-router` (^4.5 or ^5) are **peer dependencies**  your
 app provides them.
 
 ## A client-side router
 
 This is a router for single-page apps. Every route is reached by **navigation**,
 so the only verb is `get` (plus `view`, `redirect`, `fallback`, `resource`, and
-`singleton`). There are no `post`/`put`/`delete` methods — those are server
+`singleton`). There are no `post`/`put`/`delete` methods  those are server
 concerns. See [Why vue-routing](/guide/why) for the full rationale.
 
 ## Define your routes
@@ -75,8 +75,8 @@ createApp(App).use(router).mount('#app')
 ## SSR, HMR & isolated facades
 
 The shared `Route` singleton is perfect for an SPA. When the module graph can
-be evaluated more than once against a cached copy of the library — Vite SSR
-dev, HMR boundaries, per-request SSR, tests importing the same routes file —
+be evaluated more than once against a cached copy of the library  Vite SSR
+dev, HMR boundaries, per-request SSR, tests importing the same routes file 
 create an **isolated facade** with `createRouteFacade()` and build your routes
 inside an explicit function:
 
@@ -90,13 +90,13 @@ export function buildRouter(hostname?: string) {
   return createAppRouter({
     routes: Route.getRoutes(),
     historyMode: 'memory',
-    hostname, // the request's Host header — enables domain() matching in SSR
+    hostname, // the request's Host header  enables domain() matching in SSR
   })
 }
 ```
 
 Re-registering the **identical** (name, path) pair on the singleton no longer
-throws either — it replaces the entry with a dev-time warning, so an
+throws either  it replaces the entry with a dev-time warning, so an
 HMR-triggered re-evaluation of a routes module is survivable. A true collision
 (same name, different path) still throws.
 

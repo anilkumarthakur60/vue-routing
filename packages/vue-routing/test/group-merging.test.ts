@@ -1,6 +1,6 @@
 /**
  * Deep group-attribute merge semantics (audit test gap: "group merge semantics
- * beyond 2 levels are untested — domain/where/missing overrides, sticky scope
+ * beyond 2 levels are untested  domain/where/missing overrides, sticky scope
  * flags, and excluded-middleware re-add").
  */
 import { beforeEach, describe, expect, it } from 'vitest'

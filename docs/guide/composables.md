@@ -22,7 +22,7 @@ const name = useRouteName() // ComputedRef<string | undefined>
 
 The current route's resourceful action (`index` / `show` / `create` / `edit`)
 when it was registered via [`resource()`](/guide/resources) or `singleton()`,
-else `undefined` — Laravel's `currentRouteAction()`.
+else `undefined`  Laravel's `currentRouteAction()`.
 
 ```ts
 import { useRouteAction } from '@anil-labs/vue-routing'
@@ -32,7 +32,7 @@ const action = useRouteAction() // ComputedRef<string | undefined>
 
 ## `useIsRoute(...patterns)`
 
-A reactive predicate — handy for active nav states. Patterns may use `*` as a
+A reactive predicate  handy for active nav states. Patterns may use `*` as a
 wildcard (Laravel's `routeIs`), and you can pass several:
 
 ```ts

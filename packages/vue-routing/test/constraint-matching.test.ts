@@ -1,6 +1,6 @@
 /**
  * Runtime constraint matching (audit test gap: "constraints are never tested
- * through actual vue-router matching") — every case pushes a violating URL
+ * through actual vue-router matching")  every case pushes a violating URL
  * through a real router and asserts vue-router rejects it (falls back to the
  * NotFound route), then pushes a conforming URL and asserts it matches.
  */

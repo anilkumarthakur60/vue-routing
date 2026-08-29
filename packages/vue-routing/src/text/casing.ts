@@ -39,7 +39,7 @@ const IRREGULAR_SINGULARS: Record<string, string> = {
 }
 
 /**
- * Naive English singularization — the inverse of {@link pluralize}, covering the
+ * Naive English singularization  the inverse of {@link pluralize}, covering the
  * common cases (used to derive a resource's route parameter, e.g.
  * `users` → `user`, `categories` → `category`). Pass `parameters` to
  * `resource()` to override irregular cases.

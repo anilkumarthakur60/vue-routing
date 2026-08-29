@@ -4,7 +4,7 @@ import type { ResourceAction, SingletonAction } from '@/constants'
 /**
  * Options accepted by `resource()` (and, via {@link SingletonOptions},
  * `singleton()`). The action union is a type parameter so `only` / `except` /
- * `components` keys are checked against the real action names — a typo like
+ * `components` keys are checked against the real action names  a typo like
  * `only: ['idnex']` fails to compile instead of silently dropping routes.
  */
 export interface ResourceOptions<TAction extends string = ResourceAction> {

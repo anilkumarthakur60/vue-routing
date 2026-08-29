@@ -1,5 +1,5 @@
 /**
- * Router factory — builds a fully-configured vue-router instance with the
+ * Router factory  builds a fully-configured vue-router instance with the
  * navigation guard wired in. Keeps the consumer's `router/index.ts` declarative.
  */
 import {
@@ -33,7 +33,7 @@ const HISTORY_FACTORIES: Record<
  * records whose domain does not match are dropped before the router is
  * created, so the same path registered under several domains matches the
  * right record per host. SSR consumers should pass the request's `Host`
- * header as `hostname` — without it, domain filtering/validation is skipped.
+ * header as `hostname`  without it, domain filtering/validation is skipped.
  *
  * @example
  * ```ts
@@ -69,7 +69,7 @@ export function createAppRouter(options: CreateAppRouterOptions): Router {
 /**
  * Drop records whose `meta.domain` does not match the effective hostname.
  * The hostname is fixed for a page load, so resolving domains at creation
- * time is sound — and it is the only way vue-router (which matches on path
+ * time is sound  and it is the only way vue-router (which matches on path
  * alone) can serve the same path registered under two different domains.
  */
 function filterByDomain(records: RouteRecordRaw[], hostname: string): RouteRecordRaw[] {

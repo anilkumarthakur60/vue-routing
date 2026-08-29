@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// A second, separate layout — proves routes can live under different shells.
+// A second, separate layout  proves routes can live under different shells.
 </script>
 
 <template>

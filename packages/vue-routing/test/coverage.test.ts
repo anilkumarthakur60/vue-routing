@@ -23,7 +23,7 @@ beforeEach(() => {
   Route.flush()
 })
 
-describe('Router facade — full attribute surface', () => {
+describe('Router facade  full attribute surface', () => {
   it('exposes every constraint builder', () => {
     Route.whereNumber('n').group(() => Route.get('n/{n}', Page).name('rn'))
     Route.whereAlpha('a').group(() => Route.get('a/{a}', Page).name('ra'))
@@ -133,7 +133,7 @@ describe('RouteDefinition aliases', () => {
   })
 })
 
-describe('record-factory — middleware/missing on redirect & fallback', () => {
+describe('record-factory  middleware/missing on redirect & fallback', () => {
   const log = function log(): boolean {
     return true
   }
@@ -243,12 +243,12 @@ describe('RouteDefinition chains on redirect records (meta starts undefined)', (
     Route.get('new/:rest(.*)*', Page).name('n')
     const router = createAppRouter({ routes: Route.getRoutes(), historyMode: 'memory' })
     await router.push('/old/a/b')
-    // Catch-all redirects keep the whole tail — one encoded segment per element.
+    // Catch-all redirects keep the whole tail  one encoded segment per element.
     expect(router.currentRoute.value.fullPath).toBe('/new/a/b')
   })
 })
 
-describe('RouteDefinition — remaining edge branches', () => {
+describe('RouteDefinition  remaining edge branches', () => {
   it('where() on a layout child keeps the relative path shape', () => {
     Route.layout(Layout).group(() => {
       Route.get('u/{id}', Page).where({ id: '[0-9]+' }).name('u')
@@ -267,7 +267,7 @@ describe('RouteDefinition — remaining edge branches', () => {
   })
 })
 
-describe('route table rendering — placeholder cells', () => {
+describe('route table rendering  placeholder cells', () => {
   it('renders "-" for unnamed routes and empty or absent middleware', () => {
     Route.get('anon', Page) // unnamed, middleware === []
     Route.redirect('from', '/to') // redirect meta carries no middleware key

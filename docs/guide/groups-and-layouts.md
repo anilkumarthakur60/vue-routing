@@ -2,7 +2,7 @@
 
 ## Groups
 
-Share attributes — prefix, name prefix, middleware, constraints, domain — across
+Share attributes  prefix, name prefix, middleware, constraints, domain  across
 many routes. Attribute methods are chainable and return a new registrar; call
 `.group(cb)` to open the group.
 
@@ -14,7 +14,7 @@ Route.prefix('admin')
   })
 ```
 
-Groups nest, and attributes merge intelligently — prefixes and names are
+Groups nest, and attributes merge intelligently  prefixes and names are
 appended, middleware and constraints are combined:
 
 ```ts
@@ -84,7 +84,7 @@ Route.prefix('admin').group(() => {
 })
 ```
 
-Lazy loaders (`() => import('…')`) are unaffected — they are values, not
+Lazy loaders (`() => import('…')`) are unaffected  they are values, not
 awaited registrations.
 
 ### Available group attributes
@@ -114,7 +114,7 @@ Route.layout(MainLayout).group(() => {
 })
 ```
 
-Both routes become children of a single `MainLayout` wrapper — the wrapper is
+Both routes become children of a single `MainLayout` wrapper  the wrapper is
 reused for siblings.
 
 ### Nested layouts

@@ -2,7 +2,7 @@
 
 /**
  * Regex source matching a vue-router param token: `:name`, an optional inline
- * regex (`:name(\\d+)`), and an optional modifier — `?` (optional), `*`
+ * regex (`:name(\\d+)`), and an optional modifier  `?` (optional), `*`
  * (zero-or-more repeatable, e.g. the `/:pathMatch(.*)*` fallback), `+`
  * (one-or-more repeatable).
  */
@@ -12,7 +12,7 @@ export const PARAM_PATTERN = ':([A-Za-z0-9_]+)(\\([^)]*\\))?([?+*]?)'
  * Convert Laravel-style braces to vue-router colon params:
  * - `{id}`         → `:id`
  * - `{id?}`        → `:id?`       (optional)
- * - `{post:slug}`  → `:post`      (custom key — column handled by bindings)
+ * - `{post:slug}`  → `:post`      (custom key  column handled by bindings)
  * - `{post:slug?}` → `:post?`     (optional custom key)
  *
  * Already-colon (`:id`) syntax is left untouched, so both styles interoperate.

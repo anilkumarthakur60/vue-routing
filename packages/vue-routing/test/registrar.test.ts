@@ -4,7 +4,7 @@ import type { RouteRecordRaw } from 'vue-router'
 import { Route } from '@anil-labs/vue-routing'
 import type { MiddlewareFn } from '@anil-labs/vue-routing'
 
-/** Minimal stub component — never mounted, only inspected. */
+/** Minimal stub component  never mounted, only inspected. */
 const stub = (name: string): Component => ({ name, render: () => null })
 
 /** Typed child accessor for assertions (only wrappers carry children). */
@@ -207,7 +207,7 @@ describe('resourceful routing', () => {
     expect(byName['posts.create']).toBe('/posts/create')
     expect(byName['posts.show']).toBe('/posts/:post')
     expect(byName['posts.edit']).toBe('/posts/:post/edit')
-    // No store/update/destroy — those are server-side mutations with no page.
+    // No store/update/destroy  those are server-side mutations with no page.
     expect(rows).toHaveLength(4)
   })
 

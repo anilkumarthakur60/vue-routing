@@ -15,7 +15,7 @@ beforeEach(() => {
   Route.flush()
 })
 
-describe('resource() — parameter naming', () => {
+describe('resource()  parameter naming', () => {
   it('uses the singularized resource name as the parameter', () => {
     Route.resource('users', Page)
     const map = routeMap()
@@ -41,7 +41,7 @@ describe('resource() — parameter naming', () => {
   })
 })
 
-describe('resource() — filtering & components', () => {
+describe('resource()  filtering & components', () => {
   it('restricts with only / except', () => {
     Route.resource('a', Page, { only: ['index', 'show'] })
     Route.resource('b', Page, { except: ['create', 'edit'] })
@@ -64,7 +64,7 @@ describe('resource() — filtering & components', () => {
   })
 })
 
-describe('resource() — nesting & merging', () => {
+describe('resource()  nesting & merging', () => {
   it('builds nested dot-notation resources', () => {
     Route.resource('photos.comments', Page)
     const map = routeMap()
@@ -100,7 +100,7 @@ describe('resource() — nesting & merging', () => {
   })
 })
 
-describe('resources() — bulk registration', () => {
+describe('resources()  bulk registration', () => {
   it('registers many resources from a map', () => {
     Route.resources({ photos: Page, videos: Page }, { only: ['index', 'show'] })
     const names = Route.toList().map((r) => r.name)
@@ -115,7 +115,7 @@ describe('resources() — bulk registration', () => {
   })
 })
 
-describe('pending resource — full fluent surface', () => {
+describe('pending resource  full fluent surface', () => {
   it('applies parameter(), whereNumber(), missing(), and scopeBindings()', () => {
     const handler: MissingHandler = () => undefined
     Route.resource('boxes', Page)

@@ -1,6 +1,6 @@
 # Resources
 
-A single call generates the conventional set of routes for a resource — the
+A single call generates the conventional set of routes for a resource  the
 client-side subset of Laravel's `Route::resource`.
 
 ## `resource()`
@@ -20,7 +20,7 @@ generates the four **navigable** actions:
 
 The route parameter is the **singularized** resource name (`posts` → `{post}`,
 `categories` → `{category}`). This is what makes [model binding](/guide/model-binding)
-work with resources — bind the `post` param and it resolves for `show` and `edit`.
+work with resources  bind the `post` param and it resolves for `show` and `edit`.
 
 ::: info Why no store/update/destroy?
 `store`, `update`, and `destroy` are server-side mutations with no page to
@@ -44,12 +44,12 @@ Route.resource('users', UsersPage)
   .missing(() => ({ name: 'users.index' }))
 ```
 
-The pending routes are committed automatically — in declaration order — before
+The pending routes are committed automatically  in declaration order  before
 the next route registration or any router query (`getRoutes()`, `route()`,
 `has()`, …). Chain immediately after `resource()`; chaining after the
 registration has been committed throws.
 
-Everything chainable is also available as an options object — the two forms
+Everything chainable is also available as an options object  the two forms
 are equivalent:
 
 ```ts
@@ -124,7 +124,7 @@ Route.resources({ photos: PhotosPage, videos: VideosPage }).only('index', 'show'
 
 ## Resources inside groups
 
-`resource()` composes with groups — prefixes and name prefixes merge:
+`resource()` composes with groups  prefixes and name prefixes merge:
 
 ```ts
 Route.prefix('admin')
@@ -138,7 +138,7 @@ Route.prefix('admin')
 
 ## Singleton resources
 
-A **singleton** has no identifier — use it for one-per-context resources like a
+A **singleton** has no identifier  use it for one-per-context resources like a
 profile or a site's settings (Laravel's `Route::singleton`):
 
 ```ts
@@ -147,7 +147,7 @@ Route.singleton('profile', ProfilePage)
 // profile.edit  /profile/edit
 ```
 
-Add the `create` action with `creatable` — as an option or chained (Laravel's
+Add the `create` action with `creatable`  as an option or chained (Laravel's
 `->creatable()`):
 
 ```ts

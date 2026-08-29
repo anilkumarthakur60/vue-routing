@@ -103,7 +103,7 @@ function onLogout(): void {
     <main class="content">
       <div class="topbar">
         <span class="current">
-          current route: <b>{{ routeName ?? '—' }}</b> · section (useIsRoute): <b>{{ section }}</b>
+          current route: <b>{{ routeName ?? '' }}</b> · section (useIsRoute): <b>{{ section }}</b>
         </span>
         <button @click="onLogout">Log out</button>
       </div>

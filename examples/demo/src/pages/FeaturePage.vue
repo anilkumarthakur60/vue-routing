@@ -29,23 +29,23 @@ function pretty(value: unknown): string {
 
 <template>
   <h1>
-    Feature route <span class="muted">— {{ name ?? 'unnamed' }}</span>
+    Feature route <span class="muted"> {{ name ?? 'unnamed' }}</span>
   </h1>
 
   <div class="card">
-    <p>This page reads everything from composables — no props, no fetching in the component.</p>
+    <p>This page reads everything from composables  no props, no fetching in the component.</p>
     <table>
       <tbody>
         <tr>
           <th>useRouteName()</th>
           <td>
-            <code>{{ name ?? '—' }}</code>
+            <code>{{ name ?? '' }}</code>
           </td>
         </tr>
         <tr>
           <th>useRouteAction()</th>
           <td>
-            <code>{{ action ?? '—' }}</code>
+            <code>{{ action ?? '' }}</code>
           </td>
         </tr>
         <tr>

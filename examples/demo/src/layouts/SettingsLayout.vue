@@ -10,7 +10,7 @@ const routeName = useRouteName()
 <template>
   <h1>Settings</h1>
   <p class="muted">
-    Nested layout — <code>MainLayout › SettingsLayout › page</code>. The tabs are nested routes
+    Nested layout  <code>MainLayout › SettingsLayout › page</code>. The tabs are nested routes
     rendered through this layout's own <code>&lt;router-view&gt;</code>.
   </p>
 

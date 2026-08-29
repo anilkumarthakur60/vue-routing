@@ -10,7 +10,7 @@ const router = useRouter()
     <div>
       <div class="error-code">403</div>
       <h1>Forbidden</h1>
-      <p class="muted">A standalone route — registered outside any layout group.</p>
+      <p class="muted">A standalone route  registered outside any layout group.</p>
       <button class="btn btn-primary" @click="() => router.push('/dashboard')">
         Go to dashboard
       </button>

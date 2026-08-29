@@ -14,11 +14,11 @@ const Page = stub('Page')
 
 beforeEach(() => {
   Route.flush()
-  // Reset the URL between tests — history-backed routers mutate it.
+  // Reset the URL between tests  history-backed routers mutate it.
   window.history.replaceState(null, '', '/')
 })
 
-describe('createAppRouter — history modes', () => {
+describe('createAppRouter  history modes', () => {
   it('defaults to web history at the root base', async () => {
     Route.view('home', Page).name('home')
     const router = createAppRouter({ routes: Route.getRoutes() })

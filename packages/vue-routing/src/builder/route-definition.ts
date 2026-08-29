@@ -28,7 +28,7 @@ export class RouteDefinition {
     this.namePrefix = registered.namePrefix
     this.host = host
     // A record can arrive pre-named (the fallback's auto-registered
-    // 'NotFound') — track it so a later .name() removes the stale entry.
+    // 'NotFound')  track it so a later .name() removes the stale entry.
     this.assignedName =
       typeof registered.record.name === 'string' ? registered.record.name : undefined
   }
@@ -42,7 +42,7 @@ export class RouteDefinition {
 
   /**
    * Assign a name, prefixed by any enclosing group name. Names must be unique.
-   * Renaming unregisters the previous name so no stale alias survives — the
+   * Renaming unregisters the previous name so no stale alias survives  the
    * registry and vue-router always agree on which name resolves this route.
    */
   public name(value: string): this {
@@ -82,7 +82,7 @@ export class RouteDefinition {
    * Constrain route parameters with raw regular expressions.
    *
    * Recompiles the routing path from the clean absolute path so re-constraining
-   * an already-constrained param is last-write-wins — the path and `meta.where`
+   * an already-constrained param is last-write-wins  the path and `meta.where`
    * can never silently diverge. Inline regex written directly in the URI keeps
    * precedence (the compiler never overwrites it).
    */
@@ -91,7 +91,7 @@ export class RouteDefinition {
     this.meta.where = where
     const constrained = applyWhereConstraints(this.absolutePath, where, this.host.globalPatterns)
     // Layout children were stripped of their leading slash when placed in the
-    // tree — preserve whichever shape the record currently has.
+    // tree  preserve whichever shape the record currently has.
     this.record.path = this.record.path.startsWith('/')
       ? constrained
       : constrained.replace(/^\//, '')

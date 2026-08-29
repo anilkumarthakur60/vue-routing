@@ -2,7 +2,7 @@
   "name": "@anil-labs/vue-routing",
   "version": "0.1.1",
   "type": "module",
-  "description": "Laravel-inspired, fully-typed declarative routing for Vue 3 — a fluent wrapper over vue-router.",
+  "description": "Laravel-inspired, fully-typed declarative routing for Vue 3  a fluent wrapper over vue-router.",
   "keywords": [
     "vue",
     "vue-router",

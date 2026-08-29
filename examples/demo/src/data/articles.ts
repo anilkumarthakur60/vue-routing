@@ -1,4 +1,4 @@
-/** Fake article store — backs the scoped-binding + custom-key demo. */
+/** Fake article store  backs the scoped-binding + custom-key demo. */
 import type { User } from './users'
 
 export interface Article {
@@ -17,7 +17,7 @@ const ARTICLES: readonly Article[] = [
  * Resolve an article by its `slug`, scoped to a parent author when present.
  * `parent` is the already-resolved `{user}` model (passed by the router because
  * the route opted into `scopeBindings()`). Returns `null` when not found or when
- * the article does not belong to the scoped author — which drives `missing()`.
+ * the article does not belong to the scoped author  which drives `missing()`.
  */
 export function findArticle(slug: string, parent: unknown): Article | null {
   const article = ARTICLES.find((a) => a.slug === slug)

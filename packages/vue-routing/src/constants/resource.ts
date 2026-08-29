@@ -39,7 +39,7 @@ export const SINGLETON_ACTIONS = ['create', 'show', 'edit'] as const
 /** A single navigable singleton-resource action. */
 export type SingletonAction = (typeof SINGLETON_ACTIONS)[number]
 
-/** Canonical singleton-resource map — note `show` carries no `{param}`. */
+/** Canonical singleton-resource map  note `show` carries no `{param}`. */
 export const SINGLETON_ACTION_MAP: Readonly<Record<SingletonAction, ResourceActionConfig>> = {
   create: { uri: '/create' },
   show: { uri: '' },

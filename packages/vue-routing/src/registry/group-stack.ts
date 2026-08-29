@@ -26,7 +26,7 @@ export function mergeContext(levels: readonly GroupAttributes[]): ResolvedContex
   for (const level of levels) {
     if (level.prefix) {
       // Capture `{param:field}` binding columns BEFORE the brace syntax is
-      // destroyed by the colon conversion — otherwise a custom key declared in
+      // destroyed by the colon conversion  otherwise a custom key declared in
       // a group prefix is silently lost.
       Object.assign(context.bindingFields, extractBindingFields(level.prefix))
       context.prefix = joinPaths(context.prefix, convertLaravelParams(level.prefix))
@@ -54,13 +54,13 @@ export class GroupStack {
     this.levels.push(attributes)
     try {
       // The stack pops synchronously, so an async callback would register
-      // everything after its first `await` OUTSIDE the group — silently
+      // everything after its first `await` OUTSIDE the group  silently
       // dropping the prefix/middleware. Reject thenables loudly instead.
       const invoke: () => unknown = callback
       const result = invoke()
       if (isThenable(result)) {
         throw new Error(
-          'group() callbacks must be synchronous — routes registered after an ' +
+          'group() callbacks must be synchronous  routes registered after an ' +
             'await would lose the group attributes. Await your imports before ' +
             'calling group().',
         )

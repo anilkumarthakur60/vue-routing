@@ -50,7 +50,7 @@ export default defineConfigWithVueTs(
 
   // The demo is an example app that mixes `.vue` SFCs (which the tsc-based
   // project service can't fully type). Lint it without type information to
-  // avoid untyped-`.vue`-import noise — `no-explicit-any` still applies.
+  // avoid untyped-`.vue`-import noise  `no-explicit-any` still applies.
   {
     name: 'app/examples-untyped',
     files: ['examples/**/*.{ts,vue}'],

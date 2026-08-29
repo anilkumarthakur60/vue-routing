@@ -1,10 +1,10 @@
 /**
- * Deferred resource registration — the analogue of Laravel's
+ * Deferred resource registration  the analogue of Laravel's
  * `PendingResourceRegistration`.
  *
  * `resource()` / `singleton()` no longer register their routes eagerly.
  * Instead they enqueue a pending registration on the {@link RouterCore} and
- * return one of these builders, whose fluent methods actually apply — so the
+ * return one of these builders, whose fluent methods actually apply  so the
  * idiomatic Laravel chain `Route.resource('users', C).middleware(auth)` works
  * instead of silently doing nothing. Pending registrations are committed
  * (in declaration order, inside the group context where they were declared)
@@ -166,7 +166,7 @@ export class PendingResourceRegistration<
   private assertPending(): void {
     if (this.committed) {
       throw new Error(
-        'This resource registration has already been committed — chain its ' +
+        'This resource registration has already been committed  chain its ' +
           'options immediately after resource()/singleton(), before registering ' +
           'other routes or querying the router.',
       )
@@ -174,7 +174,7 @@ export class PendingResourceRegistration<
   }
 }
 
-/** Deferred `singleton()` registration — adds the `creatable()` modifier. */
+/** Deferred `singleton()` registration  adds the `creatable()` modifier. */
 export class PendingSingletonRegistration extends PendingResourceRegistration<
   SingletonAction,
   SingletonOptions

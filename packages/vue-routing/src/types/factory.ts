@@ -8,7 +8,7 @@ export type HistoryMode = 'history' | 'hash' | 'memory'
 export interface CreateAppRouterOptions {
   /** Route records, typically from `Route.getRoutes()`. */
   routes: RouteRecordRaw[]
-  /** History mode — defaults to `'history'`. */
+  /** History mode  defaults to `'history'`. */
   historyMode?: HistoryMode
   /** Base URL for history (e.g. `import.meta.env.BASE_URL`). */
   base?: string

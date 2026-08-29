@@ -1,5 +1,5 @@
 /**
- * Route definitions for the demo — every feature of @anil-labs/vue-routing,
+ * Route definitions for the demo  every feature of @anil-labs/vue-routing,
  * annotated with the capability it demonstrates.
  */
 import { Route } from '@anil-labs/vue-routing'

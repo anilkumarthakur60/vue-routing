@@ -18,7 +18,7 @@ const slug = computed(() => {
       Viewing doc: <b>{{ slug }}</b>
     </p>
     <p v-else class="muted">
-      No slug — both <code>/docs</code> and <code>/docs/anything</code> match this route.
+      No slug  both <code>/docs</code> and <code>/docs/anything</code> match this route.
     </p>
     <div class="pill-row">
       <router-link class="btn" :to="{ name: 'docs' }">/docs</router-link>

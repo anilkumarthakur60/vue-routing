@@ -190,7 +190,7 @@ describe('optional custom-key params ({post:slug?}) end-to-end (audit test gap)'
     await router.push('/posts/hello')
     expect(router.currentRoute.value.name).toBe('posts.show')
     expect(calls).toEqual([{ value: 'hello', field: 'slug' }])
-    // The segment is optional — the bare prefix matches the same route.
+    // The segment is optional  the bare prefix matches the same route.
     await router.push('/posts')
     expect(router.currentRoute.value.name).toBe('posts.show')
   })

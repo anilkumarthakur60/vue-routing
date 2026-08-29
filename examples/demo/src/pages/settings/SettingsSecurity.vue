@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Child of SettingsLayout — route name "settings.security" at /settings/security.
+// Child of SettingsLayout  route name "settings.security" at /settings/security.
 </script>
 
 <template>

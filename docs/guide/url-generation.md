@@ -3,21 +3,21 @@
 ## Naming routes
 
 Give a route a name with `.name()` (or its alias `.as()`). Names must be
-unique — registering the same name for a **different path** throws.
+unique  registering the same name for a **different path** throws.
 
 ```ts
 Route.get('users/{id}/profile', ProfilePage).name('users.profile')
 Route.get('about', AboutPage).as('about') // alias of name()
 ```
 
-Group name prefixes are appended with a `.` separator — see
+Group name prefixes are appended with a `.` separator  see
 [Groups & Layouts](/guide/groups-and-layouts#name-prefixes).
 
 Two edge cases behave sensibly:
 
-- **Renaming** — calling `.name()` again on the same definition unregisters the
+- **Renaming**  calling `.name()` again on the same definition unregisters the
   previous name, so no stale alias lingers in the registry.
-- **Re-registration** — registering the identical (name, path) pair again
+- **Re-registration**  registering the identical (name, path) pair again
   replaces the entry with a dev-time warning instead of throwing, so a routes
   module re-evaluated by Vite SSR dev or HMR is survivable. See
   [Getting Started](/guide/getting-started#ssr-hmr-isolated-facades) for
@@ -53,7 +53,7 @@ Route.route('users.profile', { id: 1 }) // → '/users/1/profile'
   Route.route('docs', { slug: 'intro' }) // '/docs/intro'
   ```
 
-- A missing **required** param throws — and so does an empty one (`''` / `[]`),
+- A missing **required** param throws  and so does an empty one (`''` / `[]`),
   because silently generating a shorter, wrong URL would hide the bug at the
   call site (Laravel throws an `UrlGenerationException` too):
 
@@ -66,7 +66,7 @@ Route.route('users.profile', { id: 1 }) // → '/users/1/profile'
 
 Catch-all and repeatable params (`:path*` / `:path+`, including the fallback's
 `/:pathMatch(.*)*`) generate too. Pass an array (one path segment per element)
-or a pre-joined string — each segment is encoded individually, so the `/`
+or a pre-joined string  each segment is encoded individually, so the `/`
 separators survive:
 
 ```ts
@@ -112,7 +112,7 @@ A default for a param the path does not use never leaks into the query string.
 
 ::: tip
 `defaults()` affects `Route.route()` URL generation. For `<router-link :to="{ name }">`
-navigation, vue-router resolves params itself — pass the value, or generate the
+navigation, vue-router resolves params itself  pass the value, or generate the
 path with `Route.route()`.
 :::
 

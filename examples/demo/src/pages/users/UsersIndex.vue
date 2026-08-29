@@ -42,7 +42,7 @@ const users = allUsers()
     <p class="muted" style="margin-top: 12px">
       Try
       <router-link :to="{ name: 'users.show', params: { user: 999 } }">user #999</router-link>
-      — the binding resolves to <code>null</code>, so the route's <code>missing()</code> handler
+       the binding resolves to <code>null</code>, so the route's <code>missing()</code> handler
       redirects back here.
     </p>
   </div>

@@ -1,5 +1,5 @@
 /**
- * The public facade — Laravel's `Route`. A thin, fully-typed surface over an
+ * The public facade  Laravel's `Route`. A thin, fully-typed surface over an
  * internal {@link RouterCore}. Attribute/definition methods delegate to a fresh
  * root {@link RouteRegistrar}; router-wide concerns (global patterns, bindings,
  * named-route URLs, inspection) live directly on the facade.
@@ -201,7 +201,7 @@ export class Router {
 
   /**
    * The registered bindings, to pass into {@link createAppRouter}. Returns a
-   * snapshot copy — mutating it cannot corrupt the registry (and `flush()`
+   * snapshot copy  mutating it cannot corrupt the registry (and `flush()`
    * cannot empty a map a consumer already holds).
    */
   public getBindings(): Map<string, BindingResolver> {
@@ -247,7 +247,7 @@ export class Router {
  *
  * Prefer this over the shared {@link Route} singleton whenever the module
  * graph can be evaluated more than once against a cached copy of this library
- * (Vite SSR dev, HMR boundaries, per-request SSR, cross-file tests) — build
+ * (Vite SSR dev, HMR boundaries, per-request SSR, cross-file tests)  build
  * your routes inside an explicit function and call it per router creation.
  *
  * @example
@@ -262,5 +262,5 @@ export function createRouteFacade(): Router {
   return new Router()
 }
 
-/** The singleton facade — import and use like Laravel's `Route`. */
+/** The singleton facade  import and use like Laravel's `Route`. */
 export const Route: Router = /* @__PURE__ */ new Router()

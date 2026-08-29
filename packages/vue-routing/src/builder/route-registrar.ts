@@ -1,5 +1,5 @@
 /**
- * Fluent group/attribute builder — the analogue of Laravel's `RouteRegistrar`.
+ * Fluent group/attribute builder  the analogue of Laravel's `RouteRegistrar`.
  *
  * Attribute methods return a NEW immutable registrar carrying the merged
  * attributes. Terminal methods either open a `group()` or register a route via
@@ -157,7 +157,7 @@ export class RouteRegistrar {
     if (!callback) throw new Error('A callback is required when passing group options.')
     // Push the chained attributes and the options as SEPARATE stack levels so
     // mergeContext merges them attribute-wise (middleware concatenates, prefix
-    // joins, …) — a flat object spread would let the options object silently
+    // joins, …)  a flat object spread would let the options object silently
     // overwrite the chained attributes wholesale.
     this.core.runGroup(this.attributes, () => {
       this.core.runGroup(optionsOrCallback, callback)
@@ -206,7 +206,7 @@ export class RouteRegistrar {
    * it per segment via `options.parameters`.
    *
    * Registration is deferred (Laravel's `PendingResourceRegistration`): the
-   * returned builder's fluent methods — `.only()`, `.middleware()`, … —
+   * returned builder's fluent methods  `.only()`, `.middleware()`, … 
    * genuinely apply. The routes are committed before the next registration or
    * router query.
    */
@@ -225,7 +225,7 @@ export class RouteRegistrar {
   }
 
   /**
-   * Register a singleton resource (Laravel's `Route::singleton`) — a resource
+   * Register a singleton resource (Laravel's `Route::singleton`)  a resource
    * with no identifier. Generates the navigable `show` and `edit` actions (plus
    * `create` when creatable). Supports dot-notation nesting, e.g.
    * `'photos.thumbnail'` → `photos/{photo}/thumbnail`. Deferred like
@@ -280,7 +280,7 @@ export class RouteRegistrar {
     component: RouteComponent,
     options: SingletonOptions,
   ): void {
-    // Derive from the canonical tuple — `create` only when creatable.
+    // Derive from the canonical tuple  `create` only when creatable.
     const available = SINGLETON_ACTIONS.filter((action) => action !== 'create' || options.creatable)
     const actions = filterActions(available, options)
     const { prefix, namePrefix } = this.buildResourceLocation(name, options)
@@ -304,7 +304,7 @@ export class RouteRegistrar {
 
   /**
    * Resolve a (possibly dotted, possibly nested) resource name into its URI
-   * prefix, route-name prefix, and the leaf parameter — merging onto any
+   * prefix, route-name prefix, and the leaf parameter  merging onto any
    * prefix/name already set at this level. Parent segments each contribute
    * `segment/{parent}`; the leaf contributes just its name.
    */

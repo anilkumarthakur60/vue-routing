@@ -1,7 +1,7 @@
 import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router'
 
 /**
- * Navigation-guard result (vue-router style — no `next()` callback):
+ * Navigation-guard result (vue-router style  no `next()` callback):
  * - `void` / `true`      → allow navigation
  * - `false`              → cancel navigation
  * - `RouteLocationRaw`   → redirect
@@ -22,7 +22,7 @@ export type MissingHandler = (
 
 /**
  * Extra, fully client-side context handed to a {@link BindingResolver}. None of
- * it touches a database — it just gives your resolver enough information to scope
+ * it touches a database  it just gives your resolver enough information to scope
  * its own `fetch` the way Laravel scopes a DB query.
  */
 export interface BindingResolverContext {
@@ -46,7 +46,7 @@ export interface BindingResolverContext {
  * Receives the raw URI segment value and resolves the bound model, or `null`
  * to signal "not found" (which triggers the route's `missing()` handler).
  *
- * The resolver is your own (typically async) lookup — usually an API call — so
+ * The resolver is your own (typically async) lookup  usually an API call  so
  * the wrapper stays free of any database concern.
  */
 export type BindingResolver<TModel = unknown> = (

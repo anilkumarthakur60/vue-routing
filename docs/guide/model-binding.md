@@ -1,6 +1,6 @@
 # Model Binding
 
-Resolve a route parameter to a full model **before** the page renders — the
+Resolve a route parameter to a full model **before** the page renders  the
 client-side analogue of Laravel's route-model binding.
 
 ::: tip Explicit only
@@ -43,7 +43,7 @@ navigation is cancelled if there is none).
 ## The resolver
 
 A `BindingResolver` receives the raw segment value, the target route, and a
-**context** object — and returns the model (or `null` for "not found"):
+**context** object  and returns the model (or `null` for "not found"):
 
 ```ts
 import type { BindingResolver } from '@anil-labs/vue-routing'
@@ -51,7 +51,7 @@ import type { BindingResolver } from '@anil-labs/vue-routing'
 const userResolver: BindingResolver = (value, to, ctx) => fetchUser(value)
 ```
 
-The context is fully client-side — it never touches a database, it just gives
+The context is fully client-side  it never touches a database, it just gives
 your `fetch` enough information to scope itself:
 
 ```ts
@@ -121,4 +121,4 @@ const models = useBoundModels<{ user: User }>()
 </template>
 ```
 
-No fetching in the component — the model is already there.
+No fetching in the component  the model is already there.

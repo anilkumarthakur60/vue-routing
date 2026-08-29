@@ -27,7 +27,7 @@ export interface ResolvedContext {
   domain: string | undefined
   /**
    * Custom binding columns (`{param:field}`) declared in group prefixes.
-   * Collected before the prefixes are converted to `:param` syntax — the brace
+   * Collected before the prefixes are converted to `:param` syntax  the brace
    * form is destroyed by the conversion, so this is the only place the field
    * survives for prefix-declared params.
    */

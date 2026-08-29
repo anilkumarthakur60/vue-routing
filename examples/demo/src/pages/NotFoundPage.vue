@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Demonstrates: Route.fallback() — matches /:pathMatch(.*)* for unknown URLs.
+// Demonstrates: Route.fallback()  matches /:pathMatch(.*)* for unknown URLs.
 import { useRouter } from 'vue-router'
 
 const router = useRouter()

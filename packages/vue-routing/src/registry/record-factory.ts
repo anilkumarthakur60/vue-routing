@@ -1,6 +1,6 @@
 /**
  * Pure builders that turn a {@link ResolvedContext} + inputs into a vue-router
- * record. No state, no tree, no naming — just "what the record looks like".
+ * record. No state, no tree, no naming  just "what the record looks like".
  */
 import type { RouteMeta, RouteRecordRaw } from 'vue-router'
 import type { MiddlewareFn, ResolvedContext, RouteComponent } from '@/types'
@@ -27,7 +27,7 @@ interface RedirectContext {
 }
 
 /**
- * Never rendered — a placeholder component so middleware-carrying redirects
+ * Never rendered  a placeholder component so middleware-carrying redirects
  * are matchable records (see {@link buildRedirectRecord}).
  */
 const RedirectPassThrough: RouteComponent = {
@@ -79,7 +79,7 @@ export function buildRedirectRecord(
   status: number,
 ): BuiltRecord {
   const absolutePath = joinPaths(context.prefix, convertLaravelParams(from))
-  // `where()` constraints must gate the redirect too — otherwise
+  // `where()` constraints must gate the redirect too  otherwise
   // `whereNumber('id')` around a redirect is a silent no-op.
   const routingPath = applyWhereConstraints(absolutePath, context.where, {})
 
@@ -94,7 +94,7 @@ export function buildRedirectRecord(
 
   let record: RouteRecordRaw
   if (middleware.length > 0) {
-    // vue-router resolves `redirect` fields during location resolution — the
+    // vue-router resolves `redirect` fields during location resolution  the
     // record never appears in `to.matched`, so guards (and therefore
     // middleware) can never run for it. When middleware applies, emit a
     // matchable pass-through record instead: the navigation guard sees it and
@@ -113,7 +113,7 @@ export function buildRedirectRecord(
 /**
  * Build the redirect target resolver. Static targets stay plain strings (so
  * devtools output remains readable); targets with params compile against the
- * source location's params — a vue-router string redirect is treated as a
+ * source location's params  a vue-router string redirect is treated as a
  * literal path, so `/new/{id}` would otherwise navigate to the literal string.
  * Only params the target actually uses are forwarded, so unshared source
  * params never leak into the target's query string.
@@ -130,7 +130,7 @@ function redirectTarget(
     const values: Record<string, ParamValueInput> = {}
     for (const [key, value] of Object.entries(params)) {
       if (!names.has(key)) continue
-      // Arrays pass through whole — compileUrl expands repeatable params into
+      // Arrays pass through whole  compileUrl expands repeatable params into
       // one encoded segment per element, so catch-all redirects keep every segment.
       values[key] = value
     }

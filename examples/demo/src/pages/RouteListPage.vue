@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Demonstrates: Route.toList() — the flattened route registry.
+// Demonstrates: Route.toList()  the flattened route registry.
 import { Route } from '@anil-labs/vue-routing'
 
 const rows = Route.toList()
@@ -8,7 +8,7 @@ const rows = Route.toList()
 <template>
   <h1>Route table</h1>
   <div class="card">
-    <p><code>Route.toList()</code> — every registered route (paths shown after layout nesting).</p>
+    <p><code>Route.toList()</code>  every registered route (paths shown after layout nesting).</p>
     <table>
       <thead>
         <tr>

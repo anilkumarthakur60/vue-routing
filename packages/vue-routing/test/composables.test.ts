@@ -114,7 +114,7 @@ describe('useBoundModels', () => {
     expect(read(router, () => useBoundModels()).value).toEqual({})
   })
 
-  it('resets between navigations — no stale models on unbound routes (audit test gap)', async () => {
+  it('resets between navigations  no stale models on unbound routes (audit test gap)', async () => {
     Route.get('users/{user}', Page).name('users.show')
     Route.view('plain', Page).name('plain')
     Route.bind('user', () => ({ id: 1 }))
@@ -132,7 +132,7 @@ describe('useBoundModels', () => {
 })
 
 describe('composables outside a router context (audit test gap)', () => {
-  it('reading the computed throws — composables require an installed router', () => {
+  it('reading the computed throws  composables require an installed router', () => {
     // Called outside any component: vue-router's useRoute() cannot inject the
     // current route, so accessing the computed blows up. This pins the current
     // contract (fail loudly rather than silently returning undefined).

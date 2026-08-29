@@ -2,7 +2,7 @@
 // Post-build guard for the vue-routing demo's landing page.
 //
 // vue-tsc validates the components, but it can't tell you whether '/' actually
-// resolves to the landing — a mis-registered route, a layout swallowing the
+// resolves to the landing  a mis-registered route, a layout swallowing the
 // root, or a redirect left in place would all type-check and build cleanly and
 // then show the wrong thing. So this mounts the real built bundle in happy-dom
 // (the library's own test DOM), lets the router resolve the initial location,
@@ -78,9 +78,9 @@ const appText = () => $('#app')?.textContent ?? ''
 
 // --------------------------------------------------------------- app mounted
 
-check($('#app')?.childElementCount > 0, '#app is empty — the Vue app did not mount.')
+check($('#app')?.childElementCount > 0, '#app is empty  the Vue app did not mount.')
 
-// The landing must render at '/' — not the old dashboard redirect.
+// The landing must render at '/'  not the old dashboard redirect.
 check(
   appText().includes('Routing that reads'),
   "landing did not render at '/' (hero text missing).",

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Child of SettingsLayout — name "settings.notifications" at /settings/notifications.
+// Child of SettingsLayout  name "settings.notifications" at /settings/notifications.
 </script>
 
 <template>

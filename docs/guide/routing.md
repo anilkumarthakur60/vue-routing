@@ -10,7 +10,7 @@ Route.get('about', AboutPage).name('about')
 ```
 
 `get` registers a navigable route. The first argument is the URI, the second the
-component — either eager or a lazy `() => import('...')` loader:
+component  either eager or a lazy `() => import('...')` loader:
 
 ```ts
 Route.get('about', () => import('@/pages/About.vue')).name('about')
@@ -59,7 +59,7 @@ Route.redirect('old/{id}', '/new/{id}')
 // /old/42 → /new/42
 ```
 
-Only params the target actually uses are forwarded — unshared source params
+Only params the target actually uses are forwarded  unshared source params
 never leak into the target's query string. A param in the target that the
 source cannot supply throws at navigation time.
 
@@ -107,7 +107,7 @@ Route.fallback(NotFoundPage) // matches everything else, named "NotFound"
 
 ## Route parameters
 
-Both Laravel `{param}` and vue-router `:param` syntaxes work and interoperate —
+Both Laravel `{param}` and vue-router `:param` syntaxes work and interoperate 
 use whichever you prefer.
 
 ```ts
@@ -122,7 +122,7 @@ Route.get('posts/{post:slug?}', PostPage).name('posts.show') // optional custom 
 - `{param:column}` → a [custom binding key](/guide/model-binding#custom-keys);
   the `column` is handed to your resolver, the URL segment stays `:param`.
 
-Constrain parameters with regex via `.where()` and the `whereX` helpers — see
+Constrain parameters with regex via `.where()` and the `whereX` helpers  see
 [Parameters & Constraints](/guide/constraints).
 
 ## Inspecting registered routes
@@ -135,5 +135,5 @@ Route.list() // console.table(...) for quick debugging
 
 `Route.getRoutes()` returns the assembled `RouteRecordRaw[]` to hand to
 [`createAppRouter`](/api/#createapprouter-options). It returns a fresh array on
-each call — mutating it (or calling `Route.flush()`) cannot corrupt a copy you
+each call  mutating it (or calling `Route.flush()`) cannot corrupt a copy you
 already handed to a router.

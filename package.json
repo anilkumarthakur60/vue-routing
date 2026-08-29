@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "version": "0.0.0",
-  "description": "Monorepo for @anil-labs/vue-routing — Laravel-inspired, fully-typed declarative routing for Vue 3",
+  "description": "Monorepo for @anil-labs/vue-routing  Laravel-inspired, fully-typed declarative routing for Vue 3",
   "scripts": {
     "build": "pnpm --filter \"./packages/*\" -r build",
     "dev": "pnpm --filter example-demo dev",

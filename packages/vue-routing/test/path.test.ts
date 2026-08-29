@@ -128,7 +128,7 @@ describe('compileUrl', () => {
   })
 })
 
-describe('compileUrl — wildcard/repeatable params (audit: catch-all URL generation)', () => {
+describe('compileUrl  wildcard/repeatable params (audit: catch-all URL generation)', () => {
   it('omits an absent zero-or-more (*) param like an optional one', () => {
     expect(compileUrl('/:pathMatch(.*)*', {})).toBe('/')
     expect(compileUrl('/admin/:pathMatch(.*)*', {})).toBe('/admin')
@@ -150,7 +150,7 @@ describe('compileUrl — wildcard/repeatable params (audit: catch-all URL genera
   })
 })
 
-describe('compileUrl — empty required param values (audit: silent wrong URL)', () => {
+describe('compileUrl  empty required param values (audit: silent wrong URL)', () => {
   it('throws instead of generating a shorter, wrong URL', () => {
     expect(() => compileUrl('/users/:id/edit', { id: '' })).toThrow(
       /Parameter "id" for route "\/users\/:id\/edit" must not be empty/,
@@ -162,7 +162,7 @@ describe('compileUrl — empty required param values (audit: silent wrong URL)',
   })
 })
 
-describe('compileUrl — edge values (audit test gap)', () => {
+describe('compileUrl  edge values (audit test gap)', () => {
   it('stringifies boolean params', () => {
     expect(compileUrl('/f/:flag', { flag: true })).toBe('/f/true')
     expect(compileUrl('/f/:flag', { flag: false })).toBe('/f/false')

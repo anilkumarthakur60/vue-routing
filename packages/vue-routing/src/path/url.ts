@@ -5,8 +5,8 @@ import { PARAM_PATTERN } from '@/path/params'
 export type ParamValue = string | number | boolean
 
 /**
- * A parameter input for URL generation: a single value, or — for repeatable
- * params (`:path*` / `:path+`) — an array of path segments.
+ * A parameter input for URL generation: a single value, or  for repeatable
+ * params (`:path*` / `:path+`)  an array of path segments.
  */
 export type ParamValueInput = ParamValue | readonly ParamValue[]
 
@@ -31,7 +31,7 @@ function encodeSegments(value: ParamValueInput): string {
  * like an optional (`?`) one.
  *
  * @throws if a required parameter is missing, or has an empty value
- *   (`''` / `[]`) — silently generating a shorter, wrong URL would hide the
+ *   (`''` / `[]`)  silently generating a shorter, wrong URL would hide the
  *   bug at the call site (Laravel throws an `UrlGenerationException` too).
  */
 export function compileUrl(pattern: string, params: Record<string, ParamValueInput> = {}): string {
@@ -41,7 +41,7 @@ export function compileUrl(pattern: string, params: Record<string, ParamValueInp
     new RegExp(PARAM_PATTERN, 'g'),
     (_match, rawName: string, _regex: string | undefined, modifier: string) => {
       const value = params[rawName]
-      // A provided-but-empty value is still consumed by the token — it must
+      // A provided-but-empty value is still consumed by the token  it must
       // not leak into the query string as `?name=`.
       if (value !== undefined) used.add(rawName)
       const optional = modifier === '?' || modifier === '*'

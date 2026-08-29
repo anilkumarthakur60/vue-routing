@@ -1,7 +1,7 @@
 /**
  * @anil-labs/vue-routing
  *
- * Laravel-inspired, fully-typed declarative routing for Vue 3 — a fluent
+ * Laravel-inspired, fully-typed declarative routing for Vue 3  a fluent
  * wrapper over vue-router.
  *
  * @example Define routes (`router/web.ts`):
@@ -101,5 +101,5 @@ export {
 } from '@/path'
 export type { ParamValue, ParamValueInput, ParamToken } from '@/path'
 
-// Default export — the singleton facade, like Laravel's `Route`.
+// Default export  the singleton facade, like Laravel's `Route`.
 export { Route as default } from '@/builder'

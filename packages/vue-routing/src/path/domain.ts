@@ -1,5 +1,5 @@
 /**
- * Subdomain-pattern helpers — turn a Laravel-style `{account}.example.com`
+ * Subdomain-pattern helpers  turn a Laravel-style `{account}.example.com`
  * pattern into a real matcher. Pure functions, shared by the navigation guard
  * (host validation) and the `useSubdomainParams` composable (host extraction)
  * so the regex-escaping logic lives in exactly one place.
@@ -23,7 +23,7 @@ export function domainParamNames(domain: string): string[] {
 /**
  * Compile a domain pattern into an anchored `RegExp`. Literal characters
  * (notably the dots in `example.com`) are escaped; each `{param}` becomes a
- * single-label capture group (`[^.]+`). Matching is case-insensitive — DNS
+ * single-label capture group (`[^.]+`). Matching is case-insensitive  DNS
  * hostnames are case-insensitive and `window.location.hostname` is always
  * lowercase, so an uppercase letter in the pattern must not break matching.
  */

@@ -1,7 +1,7 @@
 # Why vue-routing
 
 `@anil-labs/vue-routing` is a thin, fully-typed wrapper over
-[vue-router](https://router.vuejs.org/). It does not replace vue-router — it
+[vue-router](https://router.vuejs.org/). It does not replace vue-router  it
 **builds the `RouteRecordRaw[]` tree for you** from a fluent, Laravel-style API,
 and wires a single navigation guard for middleware, subdomains, and model
 binding.
@@ -32,7 +32,7 @@ Route.middleware(auth)
   `beforeEach` guard handling subdomains → middleware → model binding.
 - **Composables** for reading routing state reactively in components.
 - **Strict types** that augment vue-router's `RouteMeta`, so `to.meta.middleware`,
-  `to.meta.bound`, etc. are typed everywhere — in this package and in your app.
+  `to.meta.bound`, etc. are typed everywhere  in this package and in your app.
 
 ## What it is not
 
@@ -51,7 +51,7 @@ implemented:
 | CSRF, rate limiting, route caching        | Server middleware                               |
 | Controllers / namespaces                  | Your component _is_ the handler                 |
 
-Model binding still exists — but as **explicit** resolvers (`Route.bind()`) that
+Model binding still exists  but as **explicit** resolvers (`Route.bind()`) that
 call your own API, never a database. See [Model Binding](/guide/model-binding).
 
 ## Relationship to vue-router

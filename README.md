@@ -1,6 +1,6 @@
 # @anil-labs/vue-routing
 
-Laravel-inspired, fully-typed declarative routing for **Vue 3** — a thin, ergonomic wrapper over [`vue-router`](https://router.vuejs.org/). Define routes with a fluent `Route` facade (groups, layouts, middleware, resources, constraints, named routes, model bindings) and let the package build the `vue-router` tree for you.
+Laravel-inspired, fully-typed declarative routing for **Vue 3**  a thin, ergonomic wrapper over [`vue-router`](https://router.vuejs.org/). Define routes with a fluent `Route` facade (groups, layouts, middleware, resources, constraints, named routes, model bindings) and let the package build the `vue-router` tree for you.
 
 ```ts
 Route.middleware(auth)
@@ -18,7 +18,7 @@ This is a pnpm workspace monorepo:
 
 | Path                                             | What it is                                        |
 | ------------------------------------------------ | ------------------------------------------------- |
-| [`packages/vue-routing`](./packages/vue-routing) | The published library — `@anil-labs/vue-routing`. |
+| [`packages/vue-routing`](./packages/vue-routing) | The published library  `@anil-labs/vue-routing`. |
 | [`examples/demo`](./examples/demo)               | Interactive demo SPA exercising every feature.    |
 | [`docs`](./docs)                                 | The VitePress documentation site.                 |
 
@@ -28,11 +28,11 @@ This is a pnpm workspace monorepo:
 npm i @anil-labs/vue-routing
 ```
 
-`vue` (^3.5) and `vue-router` (^4.5 or ^5) are **peer dependencies** — provide them in your app.
+`vue` (^3.5) and `vue-router` (^4.5 or ^5) are **peer dependencies**  provide them in your app.
 
 ## Quick start
 
-**`router/web.ts`** — declare routes:
+**`router/web.ts`**  declare routes:
 
 ```ts
 import { Route } from '@anil-labs/vue-routing'
@@ -57,7 +57,7 @@ Route.fallback(() => import('@/pages/NotFound.vue'))
 export default Route.getRoutes()
 ```
 
-**`router/index.ts`** — create the router:
+**`router/index.ts`**  create the router:
 
 ```ts
 import { createAppRouter, Route } from '@anil-labs/vue-routing'
@@ -71,13 +71,13 @@ export default createAppRouter({
 ```
 
 > **GET-only.** This is a client-side router: every route is reached by
-> navigation. There are no `post`/`put`/`delete` verbs — those are server
+> navigation. There are no `post`/`put`/`delete` verbs  those are server
 > concerns. The only verb is `get` (plus `view`, `redirect`, `fallback`,
 > `resource`).
 
 ## SSR: `createRouteFacade()`
 
-The shared `Route` singleton holds registration state at module scope — ideal
+The shared `Route` singleton holds registration state at module scope  ideal
 for an SPA, wrong for anything that evaluates your routes module more than
 once against a cached copy of the library (Vite SSR dev, HMR boundaries,
 per-request SSR, cross-file tests). For those, create an **isolated facade**
@@ -93,7 +93,7 @@ export function buildRouter(hostname?: string) {
   return createAppRouter({
     routes: Route.getRoutes(),
     historyMode: 'memory',
-    hostname, // pass the request's Host header — enables domain() routing in SSR
+    hostname, // pass the request's Host header  enables domain() routing in SSR
   })
 }
 ```
@@ -109,14 +109,14 @@ HMR-triggered re-evaluation survives.
 | Routes            | `Route.get(uri, component)`, `Route.view(uri, component, props?)`                                             |
 | Redirects         | `Route.redirect(from, to, status?)` (shared `{param}`s substituted), `Route.permanentRedirect`                |
 | Named routes      | `.name('x')` / `.as('x')`, plus group `name()`/`asPrefix()` prefixes                                          |
-| Groups            | `Route.middleware(...).prefix(...).group(cb)` — attributes merge, never replace                               |
-| Layouts (nested)  | `Route.layout(Comp).group(cb)` — wraps routes in `<router-view>` parents                                      |
+| Groups            | `Route.middleware(...).prefix(...).group(cb)`  attributes merge, never replace                               |
+| Layouts (nested)  | `Route.layout(Comp).group(cb)`  wraps routes in `<router-view>` parents                                      |
 | Middleware        | per-route `.middleware(...)` / `.withoutMiddleware(...)`, group-level, auto-merged                            |
 | Param constraints | `.where({...})`, `.whereNumber/whereAlpha/whereAlphaNumeric/whereUuid/whereUlid/whereIn(...)`                 |
-| Global patterns   | `Route.pattern(name, regex)` / `Route.patterns({...})` — order-independent                                    |
+| Global patterns   | `Route.pattern(name, regex)` / `Route.patterns({...})`  order-independent                                    |
 | Resources         | `Route.resource(name, comp)` → navigable `index`/`create`/`show`/`edit`, fluent `.only()`, `.middleware()`, … |
 | Model bindings    | `Route.bind(param, resolver)` / `Route.model(...)` + `.missing(handler)`                                      |
-| Subdomains        | `Route.domain('{account}.example.com').group(cb)` — per-host route matching                                   |
+| Subdomains        | `Route.domain('{account}.example.com').group(cb)`  per-host route matching                                   |
 | URL generation    | `Route.route(name, params?)` → string (domain params fill the host)                                           |
 | Inspection        | `Route.has(name)`, `Route.toList()`, `Route.list()`                                                           |
 
@@ -148,18 +148,18 @@ const models = useBoundModels<{ user: User }>()
 // models.value.user
 ```
 
-> Laravel's _implicit_ (type-hint) binding can't exist client-side — there's no
+> Laravel's _implicit_ (type-hint) binding can't exist client-side  there's no
 > reflection or DB. Use explicit `Route.bind()` / `Route.model()` resolvers.
 
 ### Composables
 
-`useRouteName()`, `useRouteAction()`, `useIsRoute(name)`, `useBoundModels<T>()`, `useSubdomainParams()` — all reactive; call within `setup()`.
+`useRouteName()`, `useRouteAction()`, `useIsRoute(name)`, `useBoundModels<T>()`, `useSubdomainParams()`  all reactive; call within `setup()`.
 
 ## Type safety
 
 Written in strict TypeScript with **zero `any`**. The package augments
 `vue-router`'s `RouteMeta`, so `to.meta.middleware`, `to.meta.bound`, etc. are
-typed everywhere — in this package and in your app.
+typed everywhere  in this package and in your app.
 
 ## Not applicable in an SPA
 
@@ -171,7 +171,7 @@ handler).
 ## Demo
 
 A full interactive demo lives in [`examples/demo/`](./examples/demo) and
-exercises every feature — layouts, middleware (auth/guest/log), redirects,
+exercises every feature  layouts, middleware (auth/guest/log), redirects,
 optional & constrained params, resources, model binding with `missing()`, URL
 generation, the route table, and 404. It imports the package by its published
 name (aliased to the workspace source, so library changes hot-reload).

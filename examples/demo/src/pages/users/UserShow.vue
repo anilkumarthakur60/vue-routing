@@ -1,5 +1,5 @@
 <script setup lang="ts">
-// Demonstrates: useBoundModels() — the {user} segment is already resolved to a
+// Demonstrates: useBoundModels()  the {user} segment is already resolved to a
 // User object by Route.bind('user', findUser) before this page renders.
 import { useBoundModels } from '@anil-labs/vue-routing'
 import type { User } from '../../data/users'
@@ -12,7 +12,7 @@ const models = useBoundModels<{ user: User }>()
     <h1>{{ models.user.name }}</h1>
     <div class="card">
       <p>
-        Resolved by <code>Route.bind('user', findUser)</code> during navigation — no fetching in the
+        Resolved by <code>Route.bind('user', findUser)</code> during navigation  no fetching in the
         component.
       </p>
       <table>

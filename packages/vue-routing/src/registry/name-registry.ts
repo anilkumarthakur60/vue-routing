@@ -12,7 +12,7 @@ export class NameRegistry {
   private readonly entries = new Map<string, NamedRouteEntry>()
 
   /**
-   * Register a name. A true collision (same name, different path) throws —
+   * Register a name. A true collision (same name, different path) throws 
    * names must be unique. Re-registering the identical (name, path) pair
    * replaces the previous entry with a dev-time warning instead of throwing,
    * so route modules can survive re-evaluation (Vite SSR dev, HMR, tests
@@ -26,7 +26,7 @@ export class NameRegistry {
       }
       warnDev(
         `[vue-routing] Route name "${name}" was re-registered for the same path ` +
-          `"${entry.absolutePath}" — replacing the previous record ` +
+          `"${entry.absolutePath}"  replacing the previous record ` +
           `(this usually means a routes module was re-evaluated).`,
       )
     }
@@ -47,7 +47,7 @@ export class NameRegistry {
    *
    * For a `domain()`-bound route whose domain params can all be resolved from
    * the provided params (or the route's defaults), a protocol-relative
-   * absolute URL is returned (`//acme.example.com/dash`) — subdomain params
+   * absolute URL is returned (`//acme.example.com/dash`)  subdomain params
    * belong in the host, never in the query string. Otherwise the relative
    * path is returned and domain-only params are dropped.
    */
@@ -56,11 +56,11 @@ export class NameRegistry {
     if (!entry) throw new Error(`Route "${name}" is not defined.`)
     const pathParams = new Set(extractParamNames(entry.absolutePath).map((token) => token.name))
     const allDefaults = entry.record.meta?.defaults ?? {}
-    // Per-route defaults fill in omitted PATH params only — a default for a
+    // Per-route defaults fill in omitted PATH params only  a default for a
     // non-path param must not leak into every URL's query string.
     const defaults = Object.entries(allDefaults).filter(([key]) => pathParams.has(key))
     // Params that exist only in the route's domain pattern are consumed by the
-    // host, never by the path — drop them so they don't leak into the query.
+    // host, never by the path  drop them so they don't leak into the query.
     const domain = entry.record.meta?.domain
     const domainParams = domain === undefined ? [] : domainParamNames(domain)
     const domainOnly = new Set(domainParams.filter((param) => !pathParams.has(param)))
@@ -81,7 +81,7 @@ export class NameRegistry {
 /**
  * Substitute a domain pattern's `{param}` tokens from the provided params
  * (falling back to the route's defaults). Returns `undefined` when the domain
- * is static or any domain param is missing — the caller then falls back to a
+ * is static or any domain param is missing  the caller then falls back to a
  * relative URL, which keeps zero-argument `route()` calls working.
  */
 function fillDomain(
@@ -94,7 +94,7 @@ function fillDomain(
   const values: Record<string, ParamValue> = {}
   for (const param of domainParams) {
     const value = params[param] ?? defaults[param]
-    // A domain token holds exactly one host segment — arrays (the only object
+    // A domain token holds exactly one host segment  arrays (the only object
     // shape in ParamValueInput) can't fill it.
     if (value === undefined || value === '' || typeof value === 'object') return undefined
     values[param] = value
